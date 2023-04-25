@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import tornado
 
 from classes.dependency import D
-from settings import SERVER_ADDRESS, SERVER_PORT, DEBUG
+import settings
 from init import initialize
 
 class Application(tornado.web.Application):
@@ -17,7 +17,7 @@ class Application(tornado.web.Application):
         self._routes = routes
 
         app_settings = {
-            "debug": DEBUG,
+            "debug": settings.DEBUG,
             "autoescape": "xhtml_escape",
             "autoreload": False
         }
@@ -34,8 +34,8 @@ if __name__ == "__main__":
     
     app = Application(routes=routes)
     app.listen(
-        address=SERVER_ADDRESS,
-        port=SERVER_PORT
+        address=settings.SERVER_ADDRESS,
+        port=settings.SERVER_PORT
     )
 
     try:

@@ -7,7 +7,7 @@ from sqlalchemy_utils import create_database, database_exists
 
 from classes.dependency import D
 from models import Base
-from settings import DB_NAME, DB_ECHO_REQUESTS
+import settings
 
 # Models need to be imported for Base to create empty tables in database
 
@@ -20,8 +20,8 @@ def create_index(index, engine):
 
 
 def initialize():
-    url = f'sqlite:///{DB_NAME}'
-    engine = create_engine(url, echo=DB_ECHO_REQUESTS)
+    url = f'sqlite:///{settings.DB_NAME}'
+    engine = create_engine(url, echo=settings.DB_ECHO_REQUESTS)
     if not database_exists(engine.url):
         create_database(url)
     Base.metadata.create_all(engine)
