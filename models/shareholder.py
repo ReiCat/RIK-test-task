@@ -13,7 +13,7 @@ class Shareholder(AbstractBase):
 
     # TODO: check if company already has a founder
 
-    company_registration_code = Column(String(7), ForeignKey('company.registration_code'), nullable=True)
+    company_registration_code = Column(BigInteger, ForeignKey('company.registration_code'), nullable=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     personal_code = Column(BigInteger, unique=True, nullable=False)

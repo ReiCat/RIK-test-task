@@ -8,16 +8,11 @@ from models.company import get_company_list_by_search_params
 class CompanySearchHandler(RequestHandler):
     async def get(self):
         company_name = self.get_argument('company_name', default="", strip=True)
-        registration_code = self.get_argument('registration_code', default="", strip=True)
+        registration_code = self.get_argument('registration_code', default=0, strip=True)
         shareholder_name = self.get_argument('shareholder_name', default="", strip=True)
-        shareholder_personal_code = self.get_argument('shareholder_personal_code', default="", strip=True)
+        shareholder_personal_code = self.get_argument('shareholder_personal_code', default=0, strip=True)
 
         self.clear()
-
-        print("AAA", company_name)
-        print("AAA", registration_code)
-        print("AAA", shareholder_name)
-        print("AAA", shareholder_personal_code)
 
         try:
             raw_company_list = await get_company_list_by_search_params(

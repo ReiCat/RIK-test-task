@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, BigInteger
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.schema import CheckConstraint
 
@@ -19,7 +19,7 @@ class Company(Base):
     #                     name='total_capital_amount_too_small'),
     # )
 
-    registration_code = Column(String(7), unique=True, primary_key=True)
+    registration_code = Column(BigInteger, unique=True, primary_key=True)
     company_name = Column(String(100), unique=True, nullable=False)
     total_capital = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
@@ -45,9 +45,9 @@ class Company(Base):
 
 async def get_company_list_by_search_params(
     company_name: str = None,
-    registration_code: str = None,
+    registration_code: int = 0,
     shareholder_name: str = None,
-    shareholder_personal_code: int = None
+    shareholder_personal_code: int = 0
 ):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
@@ -60,10 +60,10 @@ async def get_company_list_by_search_params(
                     WHERE
                         LOWER(company_name) LIKE '%' || LOWER($1) || '%'
                     OR
-                        registration_code LIKE '%' || $2 || '%';
+                        registration_code = $2;
                 """,
                 company_name,
-                registration_code,
+                int(registration_code),
                 # shareholder_name,
                 # shareholder_personal_code
             )
