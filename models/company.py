@@ -58,20 +58,33 @@ async def get_company_list_by_search_params(
                     FROM 
                         company
                     WHERE
-                        LOWER(company_name) LIKE '%' || LOWER($1) || '%'
+                        COALESCE($1, '') <> '' AND $1 != '' AND LOWER(company_name) LIKE '%' || LOWER($1) || '%'
                     OR
-                        registration_code = $2;
+                        registration_code = $2
+                    OR 
+                        registration_code = (
+                            SELECT
+                                company_registration_code
+                            FROM
+                                shareholder
+                            WHERE
+                                COALESCE($3, '') <> '' AND LOWER(first_name) LIKE '%' || LOWER($3) || '%'
+                            OR
+                                COALESCE($3, '') <> '' AND LOWER(last_name) LIKE '%' || LOWER($3) || '%'
+                            OR
+                                personal_code = $4
+                        );
                 """,
                 company_name,
                 int(registration_code),
-                # shareholder_name,
-                # shareholder_personal_code
+                shareholder_name,
+                int(shareholder_personal_code)
             )
     return companies
 
 
 async def get_company_by_registration_code(
-    registration_code: str = None,
+    registration_code: int = 0,
 ):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():

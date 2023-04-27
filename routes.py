@@ -5,6 +5,7 @@ import settings
 from handlers.react_handler import ReactHandler
 from handlers.company_handler import CompanyHandler
 from handlers.company_search_handler import CompanySearchHandler
+from handlers.shareholder_handler import ShareholderHandler
 
 routes = [
     tornado.web.url(r"/", ReactHandler),
@@ -12,4 +13,5 @@ routes = [
                     {'path': os.path.join(settings.STATIC_PATH, 'static')}),
     tornado.web.url(r"/api/company", CompanyHandler),
     tornado.web.url(r"/api/search", CompanySearchHandler),
+    tornado.web.url(r"/api/shareholder", ShareholderHandler),
 ]

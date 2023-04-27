@@ -7,6 +7,8 @@ from datamodels.company_data_model import CompanyDataModel
 from models.company import get_company_list_by_search_params, insert_company
 
 class CompanyHandler(RequestHandler):
+    PATH = "/api/company"
+
     async def get(self):
         self.clear()
 
@@ -74,7 +76,7 @@ class CompanyHandler(RequestHandler):
                 )
             ):
                 status_code = 400
-                message = "Account with such email, username or api-key already exists"
+                message = "Company with such params already exists"
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
@@ -82,10 +84,7 @@ class CompanyHandler(RequestHandler):
                 message=message
             )
 
-        dt_format = D.get('config').get(
-            'WEBSERVER_SETTINGS',
-            'dt_format'
-        )
+        dt_format = settings.DT_FORMAT
 
         self.set_status(201)
         return self.write_response({

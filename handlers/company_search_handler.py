@@ -6,6 +6,8 @@ from classes.dependency import D
 from models.company import get_company_list_by_search_params
 
 class CompanySearchHandler(RequestHandler):
+    PATH = "/api/search"
+
     async def get(self):
         company_name = self.get_argument('company_name', default="", strip=True)
         registration_code = self.get_argument('registration_code', default=0, strip=True)
@@ -14,6 +16,26 @@ class CompanySearchHandler(RequestHandler):
 
         self.clear()
 
+        try:
+            registration_code = int(registration_code)
+        except ValueError:
+            self.set_status(422)
+            return self.write_error(
+                status_code=422,
+                path=self.PATH,
+                message="Unprocessable Content"
+            )
+        
+        try:
+            shareholder_personal_code = int(shareholder_personal_code)
+        except ValueError:
+            self.set_status(422)
+            return self.write_error(
+                status_code=422,
+                path=self.PATH,
+                message="Unprocessable Content"
+            )
+        
         try:
             raw_company_list = await get_company_list_by_search_params(
                 company_name,

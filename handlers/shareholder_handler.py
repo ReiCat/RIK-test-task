@@ -3,6 +3,8 @@ from handlers import RequestHandler
 from models.shareholder import get_shareholder_list_by_company_registration_code
 
 class ShareholderHandler(RequestHandler):
+    PATH = "/api/shareholder"
+
     async def get(self):
         self.clear()
 
