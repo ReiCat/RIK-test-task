@@ -3,42 +3,121 @@ from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.schema import CheckConstraint
 
-# from server.enums import Roles
-# from server.classes.dependency import D
-# from server.datamodels.account import AccountDataModel
-from . import AbstractBase
+from classes.dependency import D
+from datamodels.company_data_model import CompanyDataModel
+from . import Base
 
 
-class Company(AbstractBase):
+class Company(Base):
     __tablename__ = 'company'
-    __table_args__ = (
-        CheckConstraint('length(name) > 3',
-                        name='name_min_length'),
-        CheckConstraint('7 < length(registration_code) > 7',
-                        name='registration_code_invalid'),
-        CheckConstraint('length(total_capital) < 2500',
-                        name='total_capital_amount_too_small'),
-    )
+    # __table_args__ = (
+    #     CheckConstraint('length(company_name) > 3',
+    #                     name='company_name_min_length'),
+    #     CheckConstraint('7 < length(registration_code) > 7',
+    #                     name='registration_code_invalid'),
+    #     CheckConstraint('length(total_capital) < 2500',
+    #                     name='total_capital_amount_too_small'),
+    # )
 
-    # area_settings = relationship('AreaSettings', cascade='all,delete')
-    name = Column(String(100), unique=True, nullable=False)
-    registration_code = Column(Integer, unique=True, nullable=False)
+    registration_code = Column(String(7), unique=True, primary_key=True)
+    company_name = Column(String(100), unique=True, nullable=False)
     total_capital = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime)
 
-    @validates('name')
-    def validate_name(self, key, name) -> str:
-        if len(name) < 3:
-            raise ValueError('name is too short')
-        return name
+    # @validates('company_name')
+    # def validate_name(self, key, company_name) -> str:
+    #     if len(company_name) < 3:
+    #         raise ValueError('company_name is too short')
+    #     return company_name
     
-    @validates('registration_code')
-    def validate_registration_code(self, key, registration_code) -> int:
-        if len(registration_code) < 3:
-            raise ValueError('registration_code is invalid')
-        return registration_code
+    # @validates('registration_code')
+    # def validate_registration_code(self, key, registration_code) -> int:
+    #     if len(registration_code) < 3:
+    #         raise ValueError('registration_code is invalid')
+    #     return registration_code
     
-    @validates('total_capital')
-    def validate_total_capital(self, key, total_capital) -> int:
-        if len(total_capital) <= 2500:
-            raise ValueError('The amount of total_capital is too small')
-        return total_capital
+    # @validates('total_capital')
+    # def validate_total_capital(self, key, total_capital) -> int:
+    #     if len(total_capital) <= 2500:
+    #         raise ValueError('The amount of total_capital is too small')
+    #     return total_capital
+
+async def get_company_list_by_search_params(
+    company_name: str = None,
+    registration_code: str = None,
+    shareholder_name: str = None,
+    shareholder_personal_code: int = None
+):
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            companies = await connection.fetch(
+                """
+                    SELECT
+                        registration_code, company_name, total_capital, created_at, updated_at
+                    FROM 
+                        company
+                    WHERE
+                        LOWER(company_name) LIKE '%' || LOWER($1) || '%'
+                    OR
+                        registration_code LIKE '%' || $2 || '%';
+                """,
+                company_name,
+                registration_code,
+                # shareholder_name,
+                # shareholder_personal_code
+            )
+    return companies
+
+
+async def get_company_by_registration_code(
+    registration_code: str = None,
+):
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            companies = await connection.fetch(
+                """
+                    SELECT
+                        registration_code, company_name, total_capital, created_at, updated_at 
+                    FROM 
+                        company
+                    WHERE
+                        registration_code = $1;
+                """,
+                registration_code
+            )
+    return companies
+
+
+async def insert_company(
+    company_data_model: CompanyDataModel
+):
+    now = datetime.now()
+    query = '''INSERT INTO
+        company_data_model (
+            registration_code,
+            company_name,
+            total_capital,
+            created_at
+        ) VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+        ) RETURNING
+            registration_code,
+            company_name,
+            total_capital,
+            created_at;
+    '''
+    now = datetime.now()
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            inserted_company = await connection.fetchrow(
+                query,
+                company_data_model.registration_code,
+                company_data_model.company_name,
+                company_data_model.total_capital,
+                now
+            )
+    return inserted_company

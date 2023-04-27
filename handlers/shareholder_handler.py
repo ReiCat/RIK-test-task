@@ -1,31 +1,13 @@
-import tornado
-
 import settings
 from handlers import RequestHandler
-from classes.dependency import D
-from models.company import get_company_list_by_search_params
+from models.shareholder import get_shareholder_list_by_company_registration_code
 
-class CompanySearchHandler(RequestHandler):
+class ShareholderHandler(RequestHandler):
     async def get(self):
-        company_name = self.get_argument('company_name', default="", strip=True)
-        registration_code = self.get_argument('registration_code', default="", strip=True)
-        shareholder_name = self.get_argument('shareholder_name', default="", strip=True)
-        shareholder_personal_code = self.get_argument('shareholder_personal_code', default="", strip=True)
-
         self.clear()
 
-        print("AAA", company_name)
-        print("AAA", registration_code)
-        print("AAA", shareholder_name)
-        print("AAA", shareholder_personal_code)
-
         try:
-            raw_company_list = await get_company_list_by_search_params(
-                company_name,
-                registration_code,
-                shareholder_name,
-                shareholder_personal_code
-            )
+            raw_company_list = await get_shareholder_list_by_company_registration_code()
         except Exception as _:
             self.set_status(500)
             return self.write_error(
