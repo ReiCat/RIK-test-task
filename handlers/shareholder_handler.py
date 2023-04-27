@@ -1,15 +1,15 @@
-import settings
 from handlers import RequestHandler
-from models.shareholder import get_shareholder_list_by_company_registration_code
+from models.shareholder import get_shareholder_by_personal_code
+
 
 class ShareholderHandler(RequestHandler):
-    PATH = "/api/shareholder"
+    PATH = "/api/shareholders/{personal_code}"
 
-    async def get(self):
+    async def get(self, personal_code: int):
         self.clear()
 
         try:
-            raw_company_list = await get_shareholder_list_by_company_registration_code()
+            raw_shareholder = await get_shareholder_by_personal_code(personal_code)
         except Exception as _:
             self.set_status(500)
             return self.write_error(
@@ -17,20 +17,13 @@ class ShareholderHandler(RequestHandler):
                 path=self.PATH,
                 message="Internal server error"
             )
-        
-        dt_format = settings.DT_FORMAT
-        
-        company_list = []
-        for raw_company in raw_company_list:
-            company_list.append({
-                "registration_code": raw_company["registration_code"],
-                "company_name": raw_company["company_name"],
-                "total_capital": raw_company["total_capital"],
-                "created_at": raw_company["created_at"].strftime(dt_format) if raw_company["created_at"] else None,
-                "updated_at": raw_company["updated_at"].strftime(dt_format) if raw_company["updated_at"] else None
-            })
 
-        return self.write_response(company_list)
-
-    async def post(self):
-        pass
+        return self.write_response({
+            "company_registration_code": raw_shareholder["company_registration_code"],
+            "first_name": raw_shareholder["first_name"],
+            "last_name": raw_shareholder["last_name"],
+            "personal_code": raw_shareholder["personal_code"],
+            "founder": raw_shareholder["founder"],
+            "created_at": raw_shareholder["created_at"],
+            "updated_at": raw_shareholder["updated_at"]
+        })

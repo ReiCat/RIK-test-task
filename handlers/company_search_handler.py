@@ -1,12 +1,8 @@
-import tornado
-
-import settings
 from handlers import RequestHandler
-from classes.dependency import D
 from models.company import get_company_list_by_search_params
 
 class CompanySearchHandler(RequestHandler):
-    PATH = "/api/search"
+    PATH = "/api/companies/search"
 
     async def get(self):
         company_name = self.get_argument('company_name', default="", strip=True)

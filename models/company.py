@@ -88,7 +88,7 @@ async def get_company_by_registration_code(
 ):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            companies = await connection.fetch(
+            company = await connection.fetch(
                 """
                     SELECT
                         registration_code, company_name, total_capital, created_at, updated_at 
@@ -99,7 +99,7 @@ async def get_company_by_registration_code(
                 """,
                 registration_code
             )
-    return companies
+    return company
 
 
 async def insert_company(
