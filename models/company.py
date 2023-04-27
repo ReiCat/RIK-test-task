@@ -9,7 +9,7 @@ from . import Base
 
 
 class Company(Base):
-    __tablename__ = 'company'
+    __tablename__ = 'companies'
     # __table_args__ = (
     #     CheckConstraint('length(company_name) > 3',
     #                     name='company_name_min_length'),
@@ -56,7 +56,7 @@ async def get_company_list_by_search_params(
                     SELECT
                         registration_code, company_name
                     FROM 
-                        company
+                        companies
                     WHERE
                         COALESCE($1, '') <> '' AND $1 != '' AND LOWER(company_name) LIKE '%' || LOWER($1) || '%'
                     OR
@@ -93,7 +93,7 @@ async def get_company_by_registration_code(
                     SELECT
                         registration_code, company_name, total_capital, created_at, updated_at 
                     FROM 
-                        company
+                        companies
                     WHERE
                         registration_code = $1;
                 """,
@@ -107,7 +107,7 @@ async def insert_company(
 ):
     now = datetime.now()
     query = '''INSERT INTO
-        company_data_model (
+        companies (
             registration_code,
             company_name,
             total_capital,

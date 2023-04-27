@@ -9,11 +9,11 @@ from . import AbstractBase
 
 
 class Shareholder(AbstractBase):
-    __tablename__ = 'shareholder'
+    __tablename__ = 'shareholders'
 
     # TODO: check if company already has a founder
 
-    company_registration_code = Column(BigInteger, ForeignKey('company.registration_code'), nullable=True)
+    company_registration_code = Column(BigInteger, ForeignKey('companies.registration_code'), nullable=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     personal_code = Column(BigInteger, unique=True, nullable=False)
@@ -24,7 +24,7 @@ async def get_shareholder_list_by_company_registration_code(company_registration
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             shareholder_list = await connection.fetch(
-                'SELECT * FROM shareholder WHERE company_registration_code = $1;',
+                'SELECT * FROM shareholders WHERE company_registration_code = $1;',
                 company_registration_code
             )
     return shareholder_list
