@@ -54,7 +54,7 @@ async def get_company_list_by_search_params(
             companies = await connection.fetch(
                 """
                     SELECT
-                        registration_code, company_name, total_capital, created_at, updated_at
+                        registration_code, company_name
                     FROM 
                         company
                     WHERE
