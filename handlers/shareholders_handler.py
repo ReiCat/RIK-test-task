@@ -3,7 +3,12 @@ import tornado
 import settings
 from handlers import RequestHandler
 from datamodels.shareholder_data_model import ShareholderDataModel
-from models.shareholder import get_shareholders_by_company_registration_code, insert_shareholder, delete_shareholder
+from models.shareholder import (
+    get_shareholders_by_company_registration_code, 
+    insert_shareholder, 
+    delete_shareholder, 
+    update_shareholder
+)
 
 class ShareholdersHandler(RequestHandler):
     PATH = "/api/shareholders/{company_registration_code}"
@@ -19,7 +24,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(500)
             return self.write_error(
                 status_code=500,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Internal server error"
             )
         
@@ -43,7 +48,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
         
@@ -63,7 +68,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
 
@@ -84,7 +89,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message=message
             )
 
@@ -104,7 +109,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
         
@@ -114,7 +119,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
         
@@ -124,7 +129,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH.format(registration_code=registration_code),
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
         
@@ -134,7 +139,7 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH.format(registration_code=registration_code),
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Missing required arguments"
             )
         
@@ -147,9 +152,78 @@ class ShareholdersHandler(RequestHandler):
             self.set_status(500)
             return self.write_error(
                 status_code=500,
-                path=self.PATH,
+                path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Internal server error"
             )
         
         self.set_status(201)
         return
+    
+    async def put(self, company_registration_code: int):
+        body_data = self.request.body
+        if not body_data:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(company_registration_code=company_registration_code),
+                message="Missing required arguments"
+            )
+        
+        request_payload = tornado.escape.json_decode(body_data)
+        shareholder_personal_code = request_payload.get('shareholder_personal_code')
+        capital = request_payload.get('capital')
+        founder = request_payload.get('founder')
+
+        try:
+            shareholder_data_model = ShareholderDataModel(
+                company_registration_code=company_registration_code,
+                shareholder_personal_code=shareholder_personal_code,
+                capital=capital,
+                founder=founder
+            )
+        except Exception as _:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(company_registration_code=company_registration_code),
+                message="Missing required arguments"
+            )
+
+        try:
+            updated_shareholder = await update_shareholder(shareholder_data_model)
+        except Exception as e:
+            status_code = 500
+            message = "Internal server error"
+            if (
+                hasattr(e, "message")
+                and isinstance(e.message, str)
+                and e.message.startswith(
+                    "duplicate key value violates unique constraint"
+                )
+            ):
+                status_code = 400
+                message = "Shareholder with such params already exists"
+            self.set_status(status_code)
+            return self.write_error(
+                status_code=status_code,
+                path=self.PATH.format(company_registration_code=company_registration_code),
+                message=message
+            )
+        
+        if not update_shareholder:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(registration_code=company_registration_code),
+                message="No shareholder found"
+            )
+
+        self.set_status(201)
+        return self.write_response({
+            "company_registration_code": updated_shareholder['company_registration_code'],
+            "shareholder_personal_code": updated_shareholder['shareholder_personal_code'],
+            "capital": updated_shareholder['capital'],
+            "founder": updated_shareholder['founder'],
+            "createdAt": updated_shareholder["created_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("created_at") else None,
+            "updated_at": updated_shareholder["updated_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("updated_at") else None
+        })

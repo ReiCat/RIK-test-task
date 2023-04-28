@@ -81,7 +81,7 @@ async def get_companies_by_shareholder_personal_code(shareholder_personal_code: 
 async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            inserted_company = await connection.fetchrow(
+            inserted_shareholder = await connection.fetchrow(
                 """
                 WITH shareholder_insert AS (
                     INSERT INTO
@@ -127,7 +127,7 @@ async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
                 shareholder_data_model.founder,
                 datetime.now()
             )
-    return inserted_company
+    return inserted_shareholder
 
 
 async def delete_shareholder(company_registration_code: int, shareholder_personal_code: int):
@@ -172,3 +172,34 @@ async def delete_shareholder(company_registration_code: int, shareholder_persona
                 company_registration_code,
                 shareholder_personal_code
             )
+
+async def update_shareholder(shareholder_data_model: ShareholderDataModel):
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            updated_shareholder = await connection.fetchrow(
+                """
+                UPDATE
+                        shareholders
+                    SET
+                        capital = $3,
+                        founder = $4
+                        updated_at = $5
+                    WHERE
+                        company_registration_code = $1
+                    AND
+                        shareholder_personal_code = $2
+                    RETURNING
+                        shareholder_personal_code,
+                        company_registration_code,
+                        capital,
+                        founder,
+                        created_at
+                        updated_at;
+                """,
+                shareholder_data_model.company_registration_code,
+                shareholder_data_model.shareholder_personal_code,
+                shareholder_data_model.capital,
+                shareholder_data_model.founder,
+                datetime.now()
+            )
+    return updated_shareholder

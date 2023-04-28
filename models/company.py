@@ -150,3 +150,29 @@ async def delete_company(registration_code: int):
                 registration_code
             )
     return inserted_company
+
+
+async def update_company(company_data_model: CompanyDataModel):
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            updated_company = await connection.fetchrow(
+                """
+                UPDATE
+                        companies
+                    SET
+                        company_name = $2,
+                        updated_at = $3
+                    WHERE
+                        registration_code = $1
+                    RETURNING
+                        registration_code,
+                        company_name,
+                        total_capital,
+                        created_at
+                        updated_at;
+                """,
+                company_data_model.registration_code,
+                company_data_model.company_name,
+                datetime.now()
+            )
+    return updated_company
