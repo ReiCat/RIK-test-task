@@ -179,27 +179,50 @@ async def update_shareholder(shareholder_data_model: ShareholderDataModel):
             updated_shareholder = await connection.fetchrow(
                 """
                 UPDATE
-                        shareholders
-                    SET
-                        capital = $3,
-                        founder = $4
-                        updated_at = $5
-                    WHERE
-                        company_registration_code = $1
-                    AND
-                        shareholder_personal_code = $2
-                    RETURNING
-                        shareholder_personal_code,
-                        company_registration_code,
-                        capital,
-                        founder,
-                        created_at
-                        updated_at;
+                    shareholders
+                SET
+                    capital = $3,
+                    founder = $4,
+                    updated_at = $5
+                WHERE
+                    company_registration_code = $1
+                AND
+                    shareholder_personal_code = $2
+                RETURNING
+                    shareholder_personal_code,
+                    company_registration_code,
+                    capital,
+                    founder,
+                    created_at
+                    updated_at;
                 """,
                 shareholder_data_model.company_registration_code,
                 shareholder_data_model.shareholder_personal_code,
                 shareholder_data_model.capital,
                 shareholder_data_model.founder,
+                datetime.now()
+            )
+
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            await connection.execute(
+                """
+                UPDATE 
+                    companies
+                SET 
+                    total_capital = (
+                        SELECT 
+                            SUM(capital) 
+                        FROM 
+                            shareholders 
+                        WHERE 
+                            company_registration_code = $1
+                    ),
+                    updated_at = $2
+                WHERE 
+                    registration_code = $1
+                """,
+                shareholder_data_model.company_registration_code,
                 datetime.now()
             )
     return updated_shareholder
