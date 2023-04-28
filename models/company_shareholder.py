@@ -32,10 +32,12 @@ async def get_company_shareholders_by_company_registration_code(company_registra
                     shareholder_personal_code, 
                     capital, 
                     founder, 
-                    created_at, 
-                    updated_at
+                    sh.first_name,
+                    sh.last_name
                 FROM 
-                    companies_shareholders 
+                    companies_shareholders cs
+                LEFT JOIN
+                    shareholders sh ON sh.personal_code = cs.shareholder_personal_code 
                 WHERE 
                     company_registration_code = $1;
                 """,
@@ -55,10 +57,11 @@ async def get_shareholder_companies_by_shareholder_personal_code(shareholder_per
                     shareholder_personal_code, 
                     capital, 
                     founder, 
-                    created_at, 
-                    updated_at
+                    c.company_name
                 FROM 
-                    companies_shareholders 
+                    companies_shareholders cs
+                LEFT JOIN
+                    companies c ON c.registration_code = cs.company_registration_code 
                 WHERE 
                     shareholder_personal_code = $1;
                 """,
