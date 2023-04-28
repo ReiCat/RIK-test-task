@@ -105,32 +105,29 @@ async def get_company_by_registration_code(
 async def insert_company(
     company_data_model: CompanyDataModel
 ):
-    now = datetime.now()
-    query = '''INSERT INTO
-        companies (
-            registration_code,
-            company_name,
-            total_capital,
-            created_at
-        ) VALUES (
-            $1,
-            $2,
-            $3,
-            $4,
-        ) RETURNING
-            registration_code,
-            company_name,
-            total_capital,
-            created_at;
-    '''
-    now = datetime.now()
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             inserted_company = await connection.fetchrow(
-                query,
+                """INSERT INTO
+                    companies (
+                        registration_code,
+                        company_name,
+                        total_capital,
+                        created_at
+                    ) VALUES (
+                        $1,
+                        $2,
+                        $3,
+                        $4,
+                    ) RETURNING
+                        registration_code,
+                        company_name,
+                        total_capital,
+                        created_at;
+                """,
                 company_data_model.registration_code,
                 company_data_model.company_name,
                 company_data_model.total_capital,
-                now
+                datetime.now()
             )
     return inserted_company

@@ -12,6 +12,7 @@ import settings
 # Models need to be imported for Base to create empty tables in database
 from models.company import Company
 from models.shareholder import Shareholder
+from models.company_shareholder import CompanyShareholder
 
 async def init_async_cursor(db_host, db_name, db_user, db_password):
     pool = await asyncpg.create_pool(host=db_host,
@@ -42,13 +43,13 @@ def initialize():
 
     companies_registration_code_idx = Index('companies_registration_code_idx', Company.registration_code)
     companies_company_name_idx = Index('companies_company_name_idx', Company.company_name)
-    shareholders_company_registration_code_idx = Index('shareholders_company_registration_code_idx', Shareholder.company_registration_code)
+    # shareholders_company_registration_code_idx = Index('shareholders_company_registration_code_idx', Shareholder.company_registration_code)
     shareholders_first_name_idx = Index('shareholders_first_name_idx', Shareholder.first_name)
     shareholders_last_name_idx = Index('shareholders_last_name_idx', Shareholder.last_name)
 
     create_index(companies_registration_code_idx, engine)
     create_index(companies_company_name_idx, engine)
-    create_index(shareholders_company_registration_code_idx, engine)
+    # create_index(shareholders_company_registration_code_idx, engine)
     create_index(shareholders_first_name_idx, engine)
     create_index(shareholders_last_name_idx, engine)
 

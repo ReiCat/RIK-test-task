@@ -13,11 +13,9 @@ class Shareholder(Base):
 
     # TODO: check if company already has a founder
 
-    company_registration_code = Column(BigInteger, ForeignKey('companies.registration_code'), nullable=True)
+    personal_code = Column(BigInteger, unique=True, primary_key=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
-    personal_code = Column(BigInteger, unique=True, primary_key=True)
-    founder = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime)
 
