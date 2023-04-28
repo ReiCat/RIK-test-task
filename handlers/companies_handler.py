@@ -23,7 +23,7 @@ class CompaniesHandler(RequestHandler):
             shareholder_personal_code = shareholder_personal_code.strip()
 
         try:
-            account_data_model = CompanyDataModel(
+            company_data_model = CompanyDataModel(
                 company_name=company_name,
                 registration_code=registration_code
             )
@@ -36,7 +36,7 @@ class CompaniesHandler(RequestHandler):
             )
 
         try:
-            inserted_company = await insert_company(account_data_model)
+            inserted_company = await insert_company(company_data_model)
         except Exception as e:
             status_code = 500
             message = "Internal server error"
@@ -61,6 +61,6 @@ class CompaniesHandler(RequestHandler):
             "registration_code": inserted_company['registration_code'],
             "company_name": inserted_company['company_name'],
             "total_capital": inserted_company['lastname'],
-            "createdAt": inserted_company["created_at"].strftime(settings.DT_FORMAT) if inserted_company["created_at"] else None,
-            "updated_at": inserted_company["updated_at"].strftime(settings.DT_FORMAT) if inserted_company["updated_at"] else None
+            "createdAt": inserted_company["created_at"].strftime(settings.DT_FORMAT) if inserted_company.get("created_at") else None,
+            "updated_at": inserted_company["updated_at"].strftime(settings.DT_FORMAT) if inserted_company.get("updated_at") else None
         })

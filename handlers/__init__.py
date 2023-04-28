@@ -2,6 +2,7 @@ import ujson
 import tornado
 import logging
 import traceback
+import re
 import settings
 
 from datetime import datetime
@@ -51,3 +52,21 @@ class RequestHandler(tornado.web.RequestHandler):
                 "message": message,
                 "path": kwargs.get("path")
             })
+
+    @staticmethod
+    def parse_value(value: str):
+        if value.lower() == 'true':
+            value = True
+        elif value.lower() == 'false':
+            value = False
+        elif value.isnumeric():
+            value = int(value)
+        elif re.compile(r'[\[\]\{\}]').findall(value):
+            value = ujson.loads(value.replace("'", '"'))
+        elif not isinstance(value, int):
+            try:
+                value = float(value)
+            except (ValueError, TypeError):
+                pass
+
+        return value

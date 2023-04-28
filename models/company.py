@@ -66,7 +66,7 @@ async def get_company_list_by_search_params(
                             SELECT
                                 company_registration_code
                             FROM
-                                shareholder
+                                shareholders
                             WHERE
                                 COALESCE($3, '') <> '' AND LOWER(first_name) LIKE '%' || LOWER($3) || '%'
                             OR
@@ -91,7 +91,11 @@ async def get_company_by_registration_code(
             company = await connection.fetch(
                 """
                     SELECT
-                        registration_code, company_name, total_capital, created_at, updated_at 
+                        registration_code, 
+                        company_name, 
+                        total_capital, 
+                        created_at, 
+                        updated_at 
                     FROM 
                         companies
                     WHERE
@@ -129,5 +133,20 @@ async def insert_company(
                 company_data_model.company_name,
                 company_data_model.total_capital,
                 datetime.now()
+            )
+    return inserted_company
+
+
+async def delete_company(registration_code: int):
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            inserted_company = await connection.exec(
+                """
+                DELETE FROM 
+                    company 
+                WHERE 
+                    registration_code = $1;
+                """,
+                registration_code
             )
     return inserted_company
