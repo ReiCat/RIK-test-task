@@ -85,55 +85,51 @@ async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
         async with connection.transaction():
             inserted_shareholder = await connection.fetchrow(
                 """
-                WITH shareholder_insert AS (
-                    INSERT INTO
-                        shareholders (
-                            company_registration_code,
-                            shareholder_personal_code,
-                            capital,
-                            founder,
-                            created_at
-                        ) 
-                    VALUES (
-                        $1,
-                        $2,
-                        $3,
-                        $4,
-                        $5
-                    ) RETURNING
+                INSERT INTO
+                    shareholders (
                         company_registration_code,
                         shareholder_personal_code,
                         capital,
                         founder,
                         created_at
-                )
-                UPDATE 
-                    companies
-                SET 
-                    total_capital = (
-                    SELECT 
-                        SUM(capital) 
-                    FROM 
-                        shareholders 
-                    WHERE 
-                        company_registration_code = shareholder_insert.company_registration_code
-                    ) + shareholder_insert.capital
-                FROM 
-                    shareholder_insert
-                WHERE 
-                    companies.registration_code = shareholder_insert.company_registration_code
-                RETURNING
-                    shareholder_insert.company_registration_code,
-                    shareholder_insert.shareholder_personal_code,
-                    shareholder_insert.capital,
-                    shareholder_insert.founder,
-                    shareholder_insert.created_at;
+                    ) 
+                VALUES (
+                    $1,
+                    $2,
+                    $3,
+                    $4,
+                    $5
+                ) RETURNING
+                    company_registration_code,
+                    shareholder_personal_code,
+                    capital,
+                    founder,
+                    created_at;
                 """,
                 shareholder_data_model.company_registration_code,
                 shareholder_data_model.shareholder_personal_code,
                 shareholder_data_model.capital,
                 shareholder_data_model.founder,
                 datetime.now()
+            )
+
+            await connection.execute(
+                """
+                UPDATE 
+                    companies
+                SET 
+                    total_capital = (
+                        SELECT 
+                            SUM(capital) 
+                        FROM 
+                            shareholders 
+                        WHERE 
+                            company_registration_code = $1
+                    )
+                WHERE 
+                    companies.registration_code = $1;
+                """,
+                shareholder_data_model.company_registration_code
             )
     return inserted_shareholder
 

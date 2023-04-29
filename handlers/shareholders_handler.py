@@ -19,11 +19,11 @@ class ShareholdersHandler(RequestHandler):
         try:
             company_registration_code = int(company_registration_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(company_registration_code=company_registration_code),
-                message="Missing required params"
+                message="Registration code must contain only numbers"
             )
 
         try:
@@ -129,11 +129,11 @@ class ShareholdersHandler(RequestHandler):
         try:
             company_registration_code = int(company_registration_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(company_registration_code=company_registration_code),
-                message="Missing required arguments"
+                message="Registration code must contain only numbers"
             )
         
         body_data = self.request.body

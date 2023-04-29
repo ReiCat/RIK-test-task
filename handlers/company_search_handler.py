@@ -19,7 +19,7 @@ class CompanySearchHandler(RequestHandler):
             return self.write_error(
                 status_code=422,
                 path=self.PATH,
-                message="Unprocessable Content"
+                message="Registration code must contain only numbers"
             )
         
         try:
@@ -29,7 +29,7 @@ class CompanySearchHandler(RequestHandler):
             return self.write_error(
                 status_code=422,
                 path=self.PATH,
-                message="Unprocessable Content"
+                message="Registration code must contain only numbers"
             )
         
         try:

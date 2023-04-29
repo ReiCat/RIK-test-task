@@ -112,7 +112,8 @@ async def insert_company(
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             inserted_company = await connection.fetchrow(
-                """INSERT INTO
+                """
+                INSERT INTO
                     companies (
                         registration_code,
                         company_name,
@@ -122,7 +123,7 @@ async def insert_company(
                         $1,
                         $2,
                         $3,
-                        $4,
+                        $4
                     ) RETURNING
                         registration_code,
                         company_name,

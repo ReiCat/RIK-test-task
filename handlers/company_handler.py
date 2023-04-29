@@ -14,11 +14,11 @@ class CompanyHandler(RequestHandler):
         try:
             registration_code = int(registration_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(registration_code=registration_code),
-                message="Missing required params"
+                message="Registration code must contain only numbers"
             )
 
         try:
@@ -59,8 +59,18 @@ class CompanyHandler(RequestHandler):
         
         request_payload = tornado.escape.json_decode(body_data)
         company_name = request_payload.get('company_name')
-        new_registration_code = request_payload.get('new_registration_code')
+        new_registration_code = request_payload.get('registration_code')
         created_at = request_payload.get('created_at')
+
+        try:
+            new_registration_code = int(new_registration_code)
+        except Exception as _:
+            self.set_status(422)
+            return self.write_error(
+                status_code=422,
+                path=self.PATH.format(registration_code=registration_code),
+                message="Registration code must contain only numbers"
+            )
 
         try:
             company_data_model = CompanyDataModel(
@@ -119,9 +129,9 @@ class CompanyHandler(RequestHandler):
         try:
             registration_code = int(registration_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(registration_code=registration_code),
-                message="Missing required params"
+                message="Registration code must contain only numbers"
             )

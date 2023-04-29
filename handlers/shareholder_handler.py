@@ -43,11 +43,11 @@ class ShareholderHandler(RequestHandler):
         try:
             personal_code = int(personal_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(personal_code=personal_code),
-                message="Missing required params"
+                message="Personal code must contain only numbers"
             )
 
     async def delete(self, personal_code: int):
@@ -56,9 +56,9 @@ class ShareholderHandler(RequestHandler):
         try:
             personal_code = int(personal_code)
         except Exception as _:
-            self.set_status(400)
+            self.set_status(422)
             return self.write_error(
-                status_code=400,
+                status_code=422,
                 path=self.PATH.format(personal_code=personal_code),
-                message="Missing required params"
+                message="Personal code must contain only numbers"
             )
