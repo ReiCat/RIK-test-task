@@ -44,6 +44,25 @@ class Company(Base):
     #         raise ValueError('The amount of total_capital is too small')
     #     return total_capital
 
+
+async def get_companies():
+    async with D.get('pool').acquire() as connection:
+        async with connection.transaction():
+            companies = await connection.fetch(
+                """
+                SELECT 
+                    registration_code,
+                    company_name,
+                    total_capital,
+                    created_at,
+                    updated_at
+                FROM 
+                    companies;
+                """
+            )
+    return companies
+
+
 async def get_companies_by_search_params(
     company_name: str = None,
     registration_code: int = 0,

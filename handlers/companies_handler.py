@@ -4,12 +4,37 @@ import settings
 from handlers import RequestHandler
 from datamodels.company_data_model import CompanyDataModel
 from datamodels.shareholder_data_model import ShareholderDataModel
-from models.company import insert_company
+from models.company import insert_company, get_companies
 from models.person import get_person_by_personal_code
 from models.shareholder import insert_shareholder
 
 class CompaniesHandler(RequestHandler):
     PATH = "/api/companies"
+
+    async def get(self):
+        self.clear()
+
+        try:
+            raw_companies = await get_companies()
+        except Exception as _:
+            self.set_status(500)
+            return self.write_error(
+                status_code=500,
+                path=self.PATH,
+                message="Internal server error"
+            )
+        
+        companies = []
+        for raw_company in raw_companies:
+            companies.append({
+                "registration_code": raw_company['registration_code'],
+                "company_name": raw_company['company_name'],
+                "total_capital": raw_company['total_capital'],
+                "createdAt": raw_company["created_at"].strftime(settings.DT_FORMAT) if raw_company.get("created_at") else None,
+                "updated_at": raw_company["updated_at"].strftime(settings.DT_FORMAT) if raw_company.get("updated_at") else None
+            })
+
+        return self.write_response(companies)
 
     async def post(self):
         request_payload = tornado.escape.json_decode(self.request.body)
