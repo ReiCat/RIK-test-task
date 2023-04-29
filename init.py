@@ -45,11 +45,17 @@ def initialize():
     companies_company_name_idx = Index('companies_company_name_idx', Company.company_name)
     persons_first_name_idx = Index('persons_first_name_idx', Person.first_name)
     persons_last_name_idx = Index('persons_last_name_idx', Person.last_name)
+    company_registration_code_idx = Index('company_registration_code_idx', Shareholder.company_registration_code)
+    shareholder_personal_code_idx = Index('shareholder_personal_code_idx', Shareholder.shareholder_personal_code)
 
     create_index(companies_registration_code_idx, engine)
     create_index(companies_company_name_idx, engine)
+
     create_index(persons_first_name_idx, engine)
     create_index(persons_last_name_idx, engine)
+
+    create_index(company_registration_code_idx, engine)
+    create_index(shareholder_personal_code_idx, engine)
 
     D.get('loop').run_until_complete(
         init_async_cursor(

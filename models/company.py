@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, BigInteger
-from sqlalchemy.orm import relationship, validates
-from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.orm import validates, relationship
+# from sqlalchemy.schema import CheckConstraint
 
 from classes.dependency import D
 from datamodels.company_data_model import CompanyDataModel
@@ -19,12 +19,13 @@ class Company(Base):
     #                     name='total_capital_amount_too_small'),
     # )
 
-    shareholder = relationship('Shareholder', cascade='all,delete')
     registration_code = Column(BigInteger, unique=True, primary_key=True)
     company_name = Column(String(100), unique=True, nullable=False)
     total_capital = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now, nullable=True)
     updated_at = Column(DateTime)
+
+    shareholders = relationship('Shareholder', backref='parent', passive_deletes=True)
 
     # @validates('company_name')
     # def validate_name(self, key, company_name) -> str:
@@ -161,10 +162,10 @@ async def insert_company(
 async def delete_company(registration_code: int):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            await connection.exec(
+            await connection.execute(
                 """
                 DELETE FROM 
-                    company 
+                    companies
                 WHERE 
                     registration_code = $1;
                 """,

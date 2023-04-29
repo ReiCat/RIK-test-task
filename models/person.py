@@ -1,6 +1,6 @@
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, BigInteger
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, DateTime, BigInteger
 
 from classes.dependency import D
 from datamodels.person_data_model import PersonDataModel
@@ -12,12 +12,13 @@ class Person(Base):
 
     # TODO: check if company already has a founder
 
-    shareholder = relationship('Shareholder', cascade='all,delete')
     personal_code = Column(BigInteger, unique=True, primary_key=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime)
+
+    shareholders = relationship('Shareholder', backref='parent', passive_deletes=True)
 
 
 async def insert_person(person_data_model: PersonDataModel):
@@ -93,7 +94,7 @@ async def get_persons():
 async def delete_person(personal_code: int):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            await connection.exec(
+            await connection.execute(
                 """
                 DELETE FROM 
                     persons 

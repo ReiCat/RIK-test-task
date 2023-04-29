@@ -1,4 +1,5 @@
 from datetime import datetime
+# from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, BigInteger, ForeignKey, Boolean, UniqueConstraint
 
 from classes.dependency import D
@@ -16,15 +17,18 @@ class Shareholder(AbstractBase):
 
     company_registration_code = Column(
         BigInteger, 
-        ForeignKey('companies.registration_code'), 
+        ForeignKey('companies.registration_code', ondelete='CASCADE'), 
         nullable=True
     )
+    # company = relationship('Company', cascade='all,delete')
+
     shareholder_personal_code = Column(
         BigInteger, 
-        ForeignKey('persons.personal_code'), 
-        # ondelete='CASCADE',
+        ForeignKey('persons.personal_code', ondelete='CASCADE'), 
         nullable=True
     )
+    # person = relationship('Person', cascade='all,delete')
+
     capital = Column(Integer, nullable=False)
     founder = Column(Boolean, default=False)
 

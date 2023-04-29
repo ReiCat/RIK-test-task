@@ -5,7 +5,6 @@ from handlers import RequestHandler
 from datamodels.person_data_model import PersonDataModel
 from models.person import (
     get_person_by_personal_code, 
-    insert_person, 
     delete_person, 
     update_person
 )
@@ -125,3 +124,13 @@ class PersonHandler(RequestHandler):
 
         if isinstance(personal_code, str) and personal_code.isnumeric():
             personal_code = int(personal_code)
+
+        try:
+            await delete_person(personal_code)
+        except Exception as e:
+            self.set_status(500)
+            return self.write_error(
+                status_code=500,
+                path=self.PATH.format(personal_code=personal_code),
+                message="Internal server error"
+            )

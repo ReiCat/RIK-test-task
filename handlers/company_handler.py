@@ -4,7 +4,7 @@ from datetime import datetime
 
 from handlers import RequestHandler
 from datamodels.company_data_model import CompanyDataModel
-from models.company import get_company_by_registration_code, update_company
+from models.company import get_company_by_registration_code, update_company, delete_company
 
 class CompanyHandler(RequestHandler):
     PATH = "/api/companies/{registration_code}"
@@ -144,3 +144,13 @@ class CompanyHandler(RequestHandler):
         
         if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
+
+        try:
+            await delete_company(registration_code)
+        except Exception as e:
+            self.set_status(500)
+            return self.write_error(
+                status_code=500,
+                path=self.PATH.format(registration_code=registration_code),
+                message="Internal server error"
+            )
