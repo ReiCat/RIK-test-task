@@ -1,64 +1,108 @@
+import tornado
+
+import settings
 from handlers import RequestHandler
+from datamodels.shareholder_data_model import ShareholderDataModel
+from models.shareholder import delete_shareholder, update_shareholder
 
 
 class ShareholderHandler(RequestHandler):
-    PATH = "/api/shareholders/{personal_code}"
+    PATH = "/api/companies/{registration_code}/shareholders/{shareholder_personal_code}"
 
-    # async def get(self, personal_code: int):
-    #     self.clear()
-
-    #     try:
-    #         personal_code = int(personal_code)
-    #     except Exception as _:
-    #         self.set_status(400)
-    #         return self.write_error(
-    #             status_code=400,
-    #             path=self.PATH.format(personal_code=personal_code),
-    #             message="Missing required params"
-    #         )
-
-    #     try:
-    #         raw_shareholder = await get_shareholder_by_personal_code(personal_code)
-    #     except Exception as _:
-    #         self.set_status(500)
-    #         return self.write_error(
-    #             status_code=500,
-    #             path=self.PATH,
-    #             message="Internal server error"
-    #         )
-
-    #     return self.write_response({
-    #         "company_registration_code": raw_shareholder["company_registration_code"],
-    #         "first_name": raw_shareholder["first_name"],
-    #         "last_name": raw_shareholder["last_name"],
-    #         "personal_code": raw_shareholder["personal_code"],
-    #         "founder": raw_shareholder["founder"],
-    #         "created_at": raw_shareholder["created_at"],
-    #         "updated_at": raw_shareholder["updated_at"]
-    #     })
-
-    async def put(self, personal_code: int):
+    async def put(self, registration_code: int, shareholder_personal_code: int):
         self.clear()
 
-        try:
-            personal_code = int(personal_code)
-        except Exception as _:
-            self.set_status(422)
+        if isinstance(registration_code, str) and registration_code.isnumeric():
+            registration_code = int(registration_code)
+
+        if isinstance(shareholder_personal_code, str) and shareholder_personal_code.isnumeric():
+            shareholder_personal_code = int(shareholder_personal_code)
+        
+        body_data = self.request.body
+        if not body_data:
+            self.set_status(400)
             return self.write_error(
-                status_code=422,
-                path=self.PATH.format(personal_code=personal_code),
-                message="Personal code must contain only numbers"
+                status_code=400,
+                path=self.PATH.format(registration_code=registration_code, shareholder_personal_code=shareholder_personal_code),
+                message="Missing required arguments"
+            )
+        
+        request_payload = tornado.escape.json_decode(body_data)
+        capital = request_payload.get('capital')
+        if isinstance(capital, str) and capital.isnumeric():
+            capital = int(capital)
+        
+        founder = request_payload.get('founder')
+
+        try:
+            shareholder_data_model = ShareholderDataModel(
+                company_registration_code=registration_code,
+                shareholder_personal_code=shareholder_personal_code,
+                capital=capital,
+                founder=founder
+            )
+        except Exception as _:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(registration_code=registration_code, shareholder_personal_code=shareholder_personal_code),
+                message="Missing required arguments"
             )
 
-    async def delete(self, personal_code: int):
+        try:
+            updated_shareholder = await update_shareholder(shareholder_data_model)
+        except Exception as e:
+            status_code = 500
+            message = "Internal server error"
+            if (
+                hasattr(e, "message")
+                and isinstance(e.message, str)
+                and e.message.startswith(
+                    "duplicate key value violates unique constraint"
+                )
+            ):
+                status_code = 400
+                message = "Shareholder with such params already exists"
+            self.set_status(status_code)
+            return self.write_error(
+                status_code=status_code,
+                path=self.PATH.format(registration_code=registration_code, shareholder_personal_code=shareholder_personal_code),
+                message=message
+            )
+        
+        if not update_shareholder:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(registration_code=registration_code, shareholder_personal_code=shareholder_personal_code),
+                message="No shareholder found"
+            )
+
+        return self.write_response({
+            "company_registration_code": updated_shareholder['company_registration_code'],
+            "shareholder_personal_code": updated_shareholder['shareholder_personal_code'],
+            "capital": updated_shareholder['capital'],
+            "founder": updated_shareholder['founder'],
+            "created_at": updated_shareholder["created_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("created_at") else None,
+            "updated_at": updated_shareholder["updated_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("updated_at") else None
+        })
+        
+
+    async def delete(self, registration_code: int, shareholder_personal_code: int):
         self.clear()
 
+        if isinstance(registration_code, str) and registration_code.isnumeric():
+            registration_code = int(registration_code)
+
+        if isinstance(shareholder_personal_code, str) and shareholder_personal_code.isnumeric():
+            shareholder_personal_code = int(shareholder_personal_code)
+        
         try:
-            personal_code = int(personal_code)
-        except Exception as _:
-            self.set_status(422)
+            await delete_shareholder(registration_code, shareholder_personal_code)
+        except Exception as e:
+            self.set_status(500)
             return self.write_error(
-                status_code=422,
-                path=self.PATH.format(personal_code=personal_code),
-                message="Personal code must contain only numbers"
+                status_code=500,
+                path=self.PATH.format(registration_code=registration_code, shareholder_personal_code=shareholder_personal_code),
+                message="Internal server error"
             )

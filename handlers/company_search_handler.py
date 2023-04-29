@@ -12,25 +12,11 @@ class CompanySearchHandler(RequestHandler):
 
         self.clear()
 
-        try:
+        if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
-        except ValueError:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH,
-                message="Registration code must contain only numbers"
-            )
-        
-        try:
+                
+        if isinstance(registration_code, str) and shareholder_personal_code.isnumeric():
             shareholder_personal_code = int(shareholder_personal_code)
-        except ValueError:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH,
-                message="Registration code must contain only numbers"
-            )
         
         try:
             raw_company_list = await get_companies_by_search_params(

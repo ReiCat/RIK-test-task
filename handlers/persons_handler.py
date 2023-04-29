@@ -95,6 +95,6 @@ class PersonsHandler(RequestHandler):
             "personal_code": inserted_person['personal_code'],
             "first_name": inserted_person['first_name'],
             "last_name": inserted_person['last_name'],
-            "createdAt": inserted_person["created_at"].strftime(settings.DT_FORMAT) if inserted_person.get("created_at") else None,
+            "created_at": inserted_person["created_at"].strftime(settings.DT_FORMAT) if inserted_person.get("created_at") else None,
             "updated_at": inserted_person["updated_at"].strftime(settings.DT_FORMAT) if inserted_person.get("updated_at") else None
         })

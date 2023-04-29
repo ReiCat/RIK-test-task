@@ -30,7 +30,7 @@ class CompaniesHandler(RequestHandler):
                 "registration_code": raw_company['registration_code'],
                 "company_name": raw_company['company_name'],
                 "total_capital": raw_company['total_capital'],
-                "createdAt": raw_company["created_at"].strftime(settings.DT_FORMAT) if raw_company.get("created_at") else None,
+                "created_at": raw_company["created_at"].strftime(settings.DT_FORMAT) if raw_company.get("created_at") else None,
                 "updated_at": raw_company["updated_at"].strftime(settings.DT_FORMAT) if raw_company.get("updated_at") else None
             })
 
@@ -43,46 +43,16 @@ class CompaniesHandler(RequestHandler):
             company_name = company_name.strip()
 
         registration_code = request_payload.get('registration_code')
-        if isinstance(registration_code, str) and len(registration_code) > 0:
-            registration_code = registration_code.strip()
-
-            try:
-                registration_code = int(registration_code)
-            except Exception as _:
-                self.set_status(422)
-                return self.write_error(
-                    status_code=422,
-                    path=self.PATH.format(registration_code=registration_code),
-                    message="Registration code must contain only numbers"
-                )
+        if isinstance(registration_code, str) and registration_code.isnumeric():
+            registration_code = int(registration_code)
 
         founder_personal_code = request_payload.get('founder_personal_code')
-        if isinstance(founder_personal_code, str) and len(founder_personal_code) > 0:
-            founder_personal_code = founder_personal_code.strip()
+        if isinstance(founder_personal_code, str) and founder_personal_code.isnumeric():
+            founder_personal_code = int(founder_personal_code)
 
-            try:
-                founder_personal_code = int(founder_personal_code)
-            except Exception as _:
-                self.set_status(422)
-                return self.write_error(
-                    status_code=422,
-                    path=self.PATH.format(registration_code=registration_code),
-                    message="Personal code must contain only numbers"
-                )
-            
         founder_capital = request_payload.get('founder_capital')
-        if isinstance(founder_capital, str) and len(founder_capital) > 0:
-            founder_capital = founder_capital.strip()
-
-            try:
-                founder_capital = int(founder_capital)
-            except Exception as _:
-                self.set_status(422)
-                return self.write_error(
-                    status_code=422,
-                    path=self.PATH.format(registration_code=registration_code),
-                    message="Founder capital must contain only numbers"
-                )
+        if isinstance(founder_capital, str) and founder_capital.isnumeric():
+            founder_capital = int(founder_capital)
         
         try:
             raw_person = await get_person_by_personal_code(
@@ -180,6 +150,6 @@ class CompaniesHandler(RequestHandler):
             "registration_code": inserted_company['registration_code'],
             "company_name": inserted_company['company_name'],
             "total_capital": inserted_company['total_capital'],
-            "createdAt": inserted_company["created_at"].strftime(settings.DT_FORMAT) if inserted_company.get("created_at") else None,
+            "created_at": inserted_company["created_at"].strftime(settings.DT_FORMAT) if inserted_company.get("created_at") else None,
             "updated_at": inserted_company["updated_at"].strftime(settings.DT_FORMAT) if inserted_company.get("updated_at") else None
         })

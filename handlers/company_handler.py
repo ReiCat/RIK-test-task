@@ -12,15 +12,8 @@ class CompanyHandler(RequestHandler):
     async def get(self, registration_code: int):
         self.clear()
 
-        try:
+        if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Registration code must contain only numbers"
-            )
 
         try:
             raw_company = await get_company_by_registration_code(registration_code)
@@ -51,15 +44,8 @@ class CompanyHandler(RequestHandler):
     async def put(self, registration_code: int):
         self.clear()
 
-        try:
+        if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Registration code must contain only numbers"
-            )
         
         body_data = self.request.body
         if not body_data:
@@ -78,15 +64,8 @@ class CompanyHandler(RequestHandler):
         if created_at:
             created_at = datetime.strptime(created_at, settings.DT_FORMAT)
 
-        try:
+        if isinstance(new_registration_code, str) and new_registration_code.isnumeric():
             new_registration_code = int(new_registration_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Registration code must contain only numbers"
-            )
         
         try:
             raw_company = await get_company_by_registration_code(registration_code)
@@ -163,12 +142,5 @@ class CompanyHandler(RequestHandler):
     async def delete(self, registration_code: int):
         self.clear()
         
-        try:
+        if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Registration code must contain only numbers"
-            )

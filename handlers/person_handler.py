@@ -16,15 +16,8 @@ class PersonHandler(RequestHandler):
     async def get(self, personal_code: int):
         self.clear()
 
-        try:
+        if isinstance(personal_code, str) and personal_code.isnumeric():
             personal_code = int(personal_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(personal_code=personal_code),
-                message="Personal code must contain only numbers"
-            )
 
         try:
             raw_person = await get_person_by_personal_code(
@@ -57,15 +50,8 @@ class PersonHandler(RequestHandler):
     async def put(self, personal_code: int):
         self.clear()
 
-        try:
+        if isinstance(personal_code, str) and personal_code.isnumeric():
             personal_code = int(personal_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(personal_code=personal_code),
-                message="Personal code must contain only numbers"
-            )
         
         body_data = self.request.body
         if not body_data:
@@ -130,19 +116,12 @@ class PersonHandler(RequestHandler):
             "personal_code": updated_person['personal_code'],
             "first_name": updated_person['first_name'],
             "last_name": updated_person['last_name'],
-            "createdAt": updated_person["created_at"].strftime(settings.DT_FORMAT) if updated_person.get("created_at") else None,
+            "created_at": updated_person["created_at"].strftime(settings.DT_FORMAT) if updated_person.get("created_at") else None,
             "updated_at": updated_person["updated_at"].strftime(settings.DT_FORMAT) if updated_person.get("updated_at") else None
         })
 
     async def delete(self, personal_code: int):
         self.clear()
 
-        try:
+        if isinstance(personal_code, str) and personal_code.isnumeric():
             personal_code = int(personal_code)
-        except Exception as _:
-            self.set_status(422)
-            return self.write_error(
-                status_code=422,
-                path=self.PATH.format(personal_code=personal_code),
-                message="Personal code must contain only numbers"
-            )
