@@ -77,7 +77,7 @@ class PersonHandler(RequestHandler):
             )
         
         request_payload = tornado.escape.json_decode(body_data)
-        new_personal_code = request_payload.get('new_personal_code')
+        new_personal_code = request_payload.get('personal_code')
         first_name = request_payload.get('first_name')
         last_name = request_payload.get('last_name')
 
@@ -126,9 +126,8 @@ class PersonHandler(RequestHandler):
                 message="No person found"
             )
 
-        self.set_status(201)
         return self.write_response({
-            "registration_code": updated_person['registration_code'],
+            "personal_code": updated_person['personal_code'],
             "first_name": updated_person['first_name'],
             "last_name": updated_person['last_name'],
             "createdAt": updated_person["created_at"].strftime(settings.DT_FORMAT) if updated_person.get("created_at") else None,

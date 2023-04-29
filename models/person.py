@@ -84,9 +84,7 @@ async def get_persons():
                     created_at,
                     updated_at
                 FROM 
-                    persons 
-                WHERE 
-                    personal_code = $1;
+                    persons;
                 """
             )
     return persons

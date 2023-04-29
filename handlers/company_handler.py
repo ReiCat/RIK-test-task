@@ -105,7 +105,6 @@ class CompanyHandler(RequestHandler):
                 message="No company found"
             )
 
-        self.set_status(201)
         return self.write_response({
             "registration_code": updated_company['registration_code'],
             "company_name": updated_company['company_name'],

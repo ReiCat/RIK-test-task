@@ -92,7 +92,7 @@ class PersonsHandler(RequestHandler):
 
         self.set_status(201)
         return self.write_response({
-            "registration_code": inserted_person['registration_code'],
+            "personal_code": inserted_person['personal_code'],
             "first_name": inserted_person['first_name'],
             "last_name": inserted_person['last_name'],
             "createdAt": inserted_person["created_at"].strftime(settings.DT_FORMAT) if inserted_person.get("created_at") else None,

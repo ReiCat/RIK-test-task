@@ -167,9 +167,6 @@ class ShareholdersHandler(RequestHandler):
                 path=self.PATH.format(company_registration_code=company_registration_code),
                 message="Internal server error"
             )
-        
-        self.set_status(201)
-        return
     
     async def put(self, company_registration_code: int):
         body_data = self.request.body
@@ -230,7 +227,6 @@ class ShareholdersHandler(RequestHandler):
                 message="No shareholder found"
             )
 
-        self.set_status(201)
         return self.write_response({
             "company_registration_code": updated_shareholder['company_registration_code'],
             "shareholder_personal_code": updated_shareholder['shareholder_personal_code'],
