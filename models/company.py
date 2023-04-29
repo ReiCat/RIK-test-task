@@ -19,10 +19,11 @@ class Company(Base):
     #                     name='total_capital_amount_too_small'),
     # )
 
+    shareholder = relationship('Shareholder', cascade='all,delete')
     registration_code = Column(BigInteger, unique=True, primary_key=True)
     company_name = Column(String(100), unique=True, nullable=False)
     total_capital = Column(Integer, nullable=False)
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, default=datetime.now, nullable=True)
     updated_at = Column(DateTime)
 
     # @validates('company_name')
@@ -88,18 +89,18 @@ async def get_company_by_registration_code(
 ):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            company = await connection.fetch(
+            company = await connection.fetchrow(
                 """
-                    SELECT
-                        registration_code, 
-                        company_name, 
-                        total_capital, 
-                        created_at, 
-                        updated_at 
-                    FROM 
-                        companies
-                    WHERE
-                        registration_code = $1;
+                SELECT
+                    registration_code, 
+                    company_name, 
+                    total_capital, 
+                    created_at, 
+                    updated_at 
+                FROM 
+                    companies
+                WHERE
+                    registration_code = $1;
                 """,
                 registration_code
             )
@@ -153,7 +154,7 @@ async def delete_company(registration_code: int):
     return True
 
 
-async def update_company(company_data_model: CompanyDataModel):
+async def update_company(old_registration_code: int, company_data_model: CompanyDataModel):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             updated_company = await connection.fetchrow(
@@ -161,19 +162,23 @@ async def update_company(company_data_model: CompanyDataModel):
                 UPDATE
                         companies
                     SET
-                        company_name = $2,
-                        updated_at = $3
+                        registration_code = $2,
+                        company_name = $3,
+                        created_at = $4,
+                        updated_at = $5
                     WHERE
                         registration_code = $1
                     RETURNING
                         registration_code,
                         company_name,
                         total_capital,
-                        created_at
+                        created_at,
                         updated_at;
                 """,
+                old_registration_code,
                 company_data_model.registration_code,
                 company_data_model.company_name,
+                company_data_model.created_at if company_data_model.created_at else None,
                 datetime.now()
             )
     return updated_company

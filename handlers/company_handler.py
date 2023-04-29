@@ -1,5 +1,6 @@
 import tornado
 import settings
+from datetime import datetime
 
 from handlers import RequestHandler
 from datamodels.company_data_model import CompanyDataModel
@@ -48,6 +49,18 @@ class CompanyHandler(RequestHandler):
         })
 
     async def put(self, registration_code: int):
+        self.clear()
+
+        try:
+            registration_code = int(registration_code)
+        except Exception as _:
+            self.set_status(422)
+            return self.write_error(
+                status_code=422,
+                path=self.PATH.format(registration_code=registration_code),
+                message="Registration code must contain only numbers"
+            )
+        
         body_data = self.request.body
         if not body_data:
             self.set_status(400)
@@ -62,6 +75,9 @@ class CompanyHandler(RequestHandler):
         new_registration_code = request_payload.get('registration_code')
         created_at = request_payload.get('created_at')
 
+        if created_at:
+            created_at = datetime.strptime(created_at, settings.DT_FORMAT)
+
         try:
             new_registration_code = int(new_registration_code)
         except Exception as _:
@@ -70,6 +86,24 @@ class CompanyHandler(RequestHandler):
                 status_code=422,
                 path=self.PATH.format(registration_code=registration_code),
                 message="Registration code must contain only numbers"
+            )
+        
+        try:
+            raw_company = await get_company_by_registration_code(registration_code)
+        except Exception as _:
+            self.set_status(500)
+            return self.write_error(
+                status_code=500,
+                path=self.PATH.format(registration_code=registration_code),
+                message="Internal server error"
+            )
+        
+        if not raw_company:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(registration_code=registration_code),
+                message="No company found"
             )
 
         try:
@@ -87,7 +121,10 @@ class CompanyHandler(RequestHandler):
             )
 
         try:
-            updated_company = await update_company(company_data_model)
+            updated_company = await update_company(
+                registration_code, 
+                company_data_model
+            )
         except Exception as e:
             status_code = 500
             message = "Internal server error"
@@ -119,7 +156,7 @@ class CompanyHandler(RequestHandler):
             "registration_code": updated_company['registration_code'],
             "company_name": updated_company['company_name'],
             "total_capital": updated_company['total_capital'],
-            "createdAt": updated_company["created_at"].strftime(settings.DT_FORMAT) if updated_company.get("created_at") else None,
+            "created_at": updated_company["created_at"].strftime(settings.DT_FORMAT) if updated_company.get("created_at") else None,
             "updated_at": updated_company["updated_at"].strftime(settings.DT_FORMAT) if updated_company.get("updated_at") else None
         })
 

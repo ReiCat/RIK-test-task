@@ -130,7 +130,7 @@ class CompaniesHandler(RequestHandler):
             )
         
         try:
-            inserted_shareholder = await insert_shareholder(shareholder_data_model)
+            await insert_shareholder(shareholder_data_model)
         except Exception as e:
             status_code = 500
             message = "Internal server error"
