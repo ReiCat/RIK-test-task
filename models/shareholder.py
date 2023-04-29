@@ -32,14 +32,16 @@ class Shareholder(AbstractBase):
 async def get_shareholders_by_company_registration_code(company_registration_code: int):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            shareholder_list = await connection.fetch(
+            shareholders = await connection.fetch(
                 """
                 SELECT
                     id, 
                     company_registration_code, 
                     shareholder_personal_code, 
                     capital, 
-                    founder, 
+                    founder,
+                    sh.created_at,
+                    sh.updated_at,
                     p.first_name,
                     p.last_name
                 FROM 
@@ -51,13 +53,13 @@ async def get_shareholders_by_company_registration_code(company_registration_cod
                 """,
                 company_registration_code
             )
-    return shareholder_list
+    return shareholders
 
 
 async def get_companies_by_shareholder_personal_code(shareholder_personal_code: int):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            shareholder_list = await connection.fetch(
+            shareholders = await connection.fetch(
                 """
                 SELECT
                     id, 
@@ -75,7 +77,7 @@ async def get_companies_by_shareholder_personal_code(shareholder_personal_code: 
                 """,
                 shareholder_personal_code
             )
-    return shareholder_list
+    return shareholders
 
 
 async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
@@ -119,7 +121,13 @@ async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
                 FROM 
                     shareholder_insert
                 WHERE 
-                    companies.registration_code = shareholder_insert.company_registration_code;
+                    companies.registration_code = shareholder_insert.company_registration_code
+                RETURNING
+                    shareholder_insert.company_registration_code,
+                    shareholder_insert.shareholder_personal_code,
+                    shareholder_insert.capital,
+                    shareholder_insert.founder,
+                    shareholder_insert.created_at;
                 """,
                 shareholder_data_model.company_registration_code,
                 shareholder_data_model.shareholder_personal_code,
@@ -172,6 +180,8 @@ async def delete_shareholder(company_registration_code: int, shareholder_persona
                 company_registration_code,
                 shareholder_personal_code
             )
+    return True
+
 
 async def update_shareholder(shareholder_data_model: ShareholderDataModel):
     async with D.get('pool').acquire() as connection:

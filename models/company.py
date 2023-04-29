@@ -43,7 +43,7 @@ class Company(Base):
     #         raise ValueError('The amount of total_capital is too small')
     #     return total_capital
 
-async def get_company_list_by_search_params(
+async def get_companies_by_search_params(
     company_name: str = None,
     registration_code: int = 0,
     shareholder_name: str = None,
@@ -140,7 +140,7 @@ async def insert_company(
 async def delete_company(registration_code: int):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
-            inserted_company = await connection.exec(
+            await connection.exec(
                 """
                 DELETE FROM 
                     company 
@@ -149,7 +149,7 @@ async def delete_company(registration_code: int):
                 """,
                 registration_code
             )
-    return inserted_company
+    return True
 
 
 async def update_company(company_data_model: CompanyDataModel):

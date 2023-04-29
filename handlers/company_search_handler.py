@@ -1,5 +1,5 @@
 from handlers import RequestHandler
-from models.company import get_company_list_by_search_params
+from models.company import get_companies_by_search_params
 
 class CompanySearchHandler(RequestHandler):
     PATH = "/api/companies/search"
@@ -33,7 +33,7 @@ class CompanySearchHandler(RequestHandler):
             )
         
         try:
-            raw_company_list = await get_company_list_by_search_params(
+            raw_company_list = await get_companies_by_search_params(
                 company_name,
                 registration_code,
                 shareholder_name,

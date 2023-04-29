@@ -17,7 +17,17 @@ class ShareholdersHandler(RequestHandler):
         self.clear()
 
         try:
-            raw_shareholder_list_list = await get_shareholders_by_company_registration_code(
+            company_registration_code = int(company_registration_code)
+        except Exception as _:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(company_registration_code=company_registration_code),
+                message="Missing required params"
+            )
+
+        try:
+            raw_shareholder_list = await get_shareholders_by_company_registration_code(
                 company_registration_code
             )
         except Exception as _:
@@ -29,12 +39,12 @@ class ShareholdersHandler(RequestHandler):
             )
         
         shareholder_list = []
-        for raw_shareholder in raw_shareholder_list_list:
+        for raw_shareholder in raw_shareholder_list:
             shareholder_list.append({
                 "company_registration_code": raw_shareholder["company_registration_code"],
                 "first_name": raw_shareholder["first_name"],
                 "last_name": raw_shareholder["last_name"],
-                "personal_code": raw_shareholder["personal_code"],
+                "shareholder_personal_code": raw_shareholder["shareholder_personal_code"],
                 "founder": raw_shareholder["founder"],
                 "created_at": raw_shareholder["created_at"],
                 "updated_at": raw_shareholder["updated_at"]
@@ -77,6 +87,17 @@ class ShareholdersHandler(RequestHandler):
         except Exception as e:
             status_code = 500
             message = "Internal server error"
+
+            if (
+                hasattr(e, "message")
+                and isinstance(e.message, str)
+                and e.message.startswith(
+                    'insert or update on table "shareholders"'
+                )
+            ):
+                status_code = 400
+                message = "No company or person found"
+
             if (
                 hasattr(e, "message")
                 and isinstance(e.message, str)
@@ -86,6 +107,7 @@ class ShareholdersHandler(RequestHandler):
             ):
                 status_code = 400
                 message = "Shareholder with such params already exists"
+
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
