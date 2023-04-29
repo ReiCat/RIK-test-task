@@ -31,6 +31,14 @@ class CompanyHandler(RequestHandler):
                 message="Internal server error"
             )
         
+        if not raw_company:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(registration_code=registration_code),
+                message="No company found"
+            )
+        
         return self.write_response({
             "registration_code": raw_company["registration_code"],
             "company_name": raw_company["company_name"],

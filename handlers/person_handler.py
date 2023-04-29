@@ -38,6 +38,14 @@ class PersonHandler(RequestHandler):
                 message="Internal server error"
             )
         
+        if not raw_person:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(personal_code=personal_code),
+                message="No person found"
+            )
+        
         return self.write_response({
                 "personal_code": raw_person["personal_code"],
                 "first_name": raw_person["first_name"],
@@ -83,12 +91,12 @@ class PersonHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH,
+                path=self.PATH.format(personal_code=personal_code),
                 message="Missing required arguments"
             )
 
         try:
-            inserted_person = await update_person(personal_code, person_data_model)
+            updated_person = await update_person(personal_code, person_data_model)
         except Exception as e:
             status_code = 500
             message = "Internal server error"
@@ -106,17 +114,25 @@ class PersonHandler(RequestHandler):
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
-                path=self.PATH,
+                path=self.PATH.format(personal_code=personal_code),
                 message=message
+            )
+        
+        if not updated_person:
+            self.set_status(404)
+            return self.write_error(
+                status_code=404,
+                path=self.PATH.format(personal_code=personal_code),
+                message="No person found"
             )
 
         self.set_status(201)
         return self.write_response({
-            "registration_code": inserted_person['registration_code'],
-            "first_name": inserted_person['first_name'],
-            "last_name": inserted_person['last_name'],
-            "createdAt": inserted_person["created_at"].strftime(settings.DT_FORMAT) if inserted_person.get("created_at") else None,
-            "updated_at": inserted_person["updated_at"].strftime(settings.DT_FORMAT) if inserted_person.get("updated_at") else None
+            "registration_code": updated_person['registration_code'],
+            "first_name": updated_person['first_name'],
+            "last_name": updated_person['last_name'],
+            "createdAt": updated_person["created_at"].strftime(settings.DT_FORMAT) if updated_person.get("created_at") else None,
+            "updated_at": updated_person["updated_at"].strftime(settings.DT_FORMAT) if updated_person.get("updated_at") else None
         })
 
     async def delete(self, personal_code: int):

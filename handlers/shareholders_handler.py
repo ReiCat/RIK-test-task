@@ -126,6 +126,16 @@ class ShareholdersHandler(RequestHandler):
         })
         
     async def delete(self, company_registration_code: int):
+        try:
+            company_registration_code = int(company_registration_code)
+        except Exception as _:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(company_registration_code=company_registration_code),
+                message="Missing required arguments"
+            )
+        
         body_data = self.request.body
         if not body_data:
             self.set_status(400)
@@ -146,29 +156,9 @@ class ShareholdersHandler(RequestHandler):
             )
         
         try:
-            company_registration_code = int(company_registration_code)
-        except Exception as _:
-            self.set_status(400)
-            return self.write_error(
-                status_code=400,
-                path=self.PATH.format(company_registration_code=company_registration_code),
-                message="Missing required arguments"
-            )
-        
-        try:
-            registration_code = int(registration_code)
-        except Exception as _:
-            self.set_status(400)
-            return self.write_error(
-                status_code=400,
-                path=self.PATH.format(company_registration_code=company_registration_code),
-                message="Missing required arguments"
-            )
-        
-        try:
             await delete_shareholder(
                 company_registration_code, 
-                registration_code
+                shareholder_personal_code
             )
         except Exception as e:
             self.set_status(500)
