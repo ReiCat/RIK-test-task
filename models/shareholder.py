@@ -1,35 +1,11 @@
 from datetime import datetime
-# from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, BigInteger, ForeignKey, Boolean, UniqueConstraint, Enum
+from sqlalchemy import Column, Integer, BigInteger, ForeignKey, Boolean, UniqueConstraint
 
 from classes.dependency import D
 from datamodels.shareholder_data_model import ShareholderDataModel
 from . import AbstractBase
 from enums import SHAREHOLDER_TYPES
 
-# class Shareholder(AbstractBase):
-#     __tablename__ = 'shareholders'
-#     __table_args__ = (
-#         UniqueConstraint(
-#             'company_registration_code', 
-#             'shareholder_code'
-#         ),
-#     )
-
-#     company_registration_code = Column(
-#         BigInteger, 
-#         ForeignKey('companies.registration_code', ondelete='CASCADE'), 
-#         nullable=True
-#     )
-
-#     shareholder_code = Column(
-#         BigInteger, 
-#         ForeignKey('persons.personal_code', ondelete='CASCADE'), 
-#         nullable=True
-#     )
-
-#     capital = Column(Integer, nullable=False)
-#     founder = Column(Boolean, default=False)
 
 class Shareholder(AbstractBase):
     __tablename__ = 'shareholders'

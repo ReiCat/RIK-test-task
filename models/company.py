@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, BigInteger
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import CheckConstraint
 
 from classes.dependency import D
@@ -30,24 +30,6 @@ class Company(Base):
     updated_at = Column(DateTime)
 
     shareholders = relationship('Shareholder', backref='parent', passive_deletes=True)
-
-    # @validates('company_name')
-    # def validate_name(self, key, company_name) -> str:
-    #     if len(company_name) < 3:
-    #         raise ValueError('company_name is too short')
-    #     return company_name
-    
-    # @validates('registration_code')
-    # def validate_registration_code(self, key, registration_code) -> int:
-    #     if len(registration_code) < 3:
-    #         raise ValueError('registration_code is invalid')
-    #     return registration_code
-    
-    # @validates('total_capital')
-    # def validate_total_capital(self, key, total_capital) -> int:
-    #     if len(total_capital) <= 2500:
-    #         raise ValueError('The amount of total_capital is too small')
-    #     return total_capital
 
 
 async def get_companies():

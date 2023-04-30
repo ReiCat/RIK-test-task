@@ -3,12 +3,7 @@ import tornado
 import settings
 from handlers import RequestHandler
 from datamodels.person_data_model import PersonDataModel
-from models.person import (
-    get_persons,
-    get_person_by_personal_code, 
-    insert_person, 
-    delete_person, 
-)
+from models.person import get_persons, insert_person
 
 class PersonsHandler(RequestHandler):
     PATH = "/api/persons"

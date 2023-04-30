@@ -4,7 +4,6 @@ import settings
 from handlers import RequestHandler
 from datamodels.shareholder_data_model import ShareholderDataModel
 from models.shareholder import delete_shareholder, update_shareholder
-from enums import SHAREHOLDER_TYPES
 
 
 class ShareholderHandler(RequestHandler):
@@ -106,8 +105,6 @@ class ShareholderHandler(RequestHandler):
 
         if isinstance(shareholder_code, str) and shareholder_code.isnumeric():
             shareholder_code = int(shareholder_code)
-            
-        # TODO: check SHAREHOLDER_TYPES
         
         try:
             await delete_shareholder(registration_code, shareholder_code)

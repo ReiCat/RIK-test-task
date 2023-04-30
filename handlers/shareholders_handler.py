@@ -1,6 +1,5 @@
 import tornado
 
-import settings
 from handlers import RequestHandler
 from datamodels.shareholder_data_model import ShareholderDataModel
 from models.shareholder import get_shareholders_by_company_registration_code, insert_shareholder

@@ -2,17 +2,10 @@ import ujson
 import tornado
 import logging
 import traceback
-import re
 import settings
 
 from datetime import datetime
-from typing import (
-    Any,
-    Optional,
-    Awaitable,
-    Callable,
-    List
-)
+from typing import Any
 
 class RequestHandler(tornado.web.RequestHandler):
     PATH = ""
@@ -34,12 +27,6 @@ class RequestHandler(tornado.web.RequestHandler):
             self.finish()
         else:
             self.set_header("Content-Type", "application/json")
-            # self.finish(
-            #     "<html><title>%(code)d: %(message)s</title>"
-            #     "<body>%(code)d: %(message)s</body></html>"
-            #     % {"code": status_code, "message": self._reason}
-            # )
-
             error = kwargs.get('error')
             message = kwargs.get('message')
             if error and hasattr(error, "args") and not message:
@@ -52,21 +39,3 @@ class RequestHandler(tornado.web.RequestHandler):
                 "message": message,
                 "path": kwargs.get("path")
             })
-
-    @staticmethod
-    def parse_value(value: str):
-        if value.lower() == 'true':
-            value = True
-        elif value.lower() == 'false':
-            value = False
-        elif value.isnumeric():
-            value = int(value)
-        elif re.compile(r'[\[\]\{\}]').findall(value):
-            value = ujson.loads(value.replace("'", '"'))
-        elif not isinstance(value, int):
-            try:
-                value = float(value)
-            except (ValueError, TypeError):
-                pass
-
-        return value

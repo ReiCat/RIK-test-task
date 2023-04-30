@@ -41,6 +41,3 @@ class CompanySearchHandler(RequestHandler):
             })
 
         return self.write_response(company_list)
-
-    async def post(self):
-        pass

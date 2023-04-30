@@ -18,13 +18,6 @@ COOKIE_SECRET = "teJAyHREJhgQpSqG98LyEwr"
 XSRF_COOKIES = True
 DT_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 
-JWT_SERVER_SECRET = "rDuESC9kt2MZTwwSkfXeWX9rTghxMQ"
-JWT_EXPIRES_IN = 86400  # seconds
-JWT_TOKEN_TYPE = "Bearer"
-JWT_ALGORITHM = "HS256"
-JWT_TOKEN_NAME = "Authorization"
-API_KEY_NAME = "X-API-Key"
-
 """ LOG SETTINGS """
 LOG_LEVEL = logging.INFO
 LOG_FILE_PATH = os.path.join(LOGS_PATH, "log.log")

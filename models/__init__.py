@@ -12,13 +12,3 @@ class AbstractBase(Base):
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime)
-
-
-def get_or_create(session, model, **kwargs):
-    instance = session.query(model).filter_by(**kwargs).first()
-    if instance:
-        return instance, False
-    instance = model(**kwargs)
-    session.add(instance)
-    session.commit()
-    return instance, True
