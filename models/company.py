@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, BigInteger
 from sqlalchemy.orm import validates, relationship
-# from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import CheckConstraint
 
 from classes.dependency import D
 from datamodels.company_data_model import CompanyDataModel
@@ -10,14 +10,18 @@ from . import Base
 
 class Company(Base):
     __tablename__ = 'companies'
-    # __table_args__ = (
-    #     CheckConstraint('length(company_name) > 3',
-    #                     name='company_name_min_length'),
-    #     CheckConstraint('7 < length(registration_code) > 7',
-    #                     name='registration_code_invalid'),
-    #     CheckConstraint('length(total_capital) < 2500',
-    #                     name='total_capital_amount_too_small'),
-    # )
+    __table_args__ = (
+        CheckConstraint('3 <= length(company_name)',
+                        name='company_name_min_length'),
+        CheckConstraint('length(company_name) <= 100',
+                        name='company_name_max_length'),
+        CheckConstraint('1000000 <= registration_code',
+                        name='registration_code_min_length'),
+        CheckConstraint('registration_code <= 9999999',
+                        name='registration_code_max_length'),
+        CheckConstraint('total_capital >= 2500',
+                        name='total_capital_amount_too_small'),
+    )
 
     registration_code = Column(BigInteger, unique=True, primary_key=True)
     company_name = Column(String(100), unique=True, nullable=False)

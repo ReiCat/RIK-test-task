@@ -72,8 +72,17 @@ class ShareholdersHandler(RequestHandler):
         
         request_payload = tornado.escape.json_decode(body_data)
         shareholder_code = request_payload.get('shareholder_code')
+        if isinstance(shareholder_code, str) and shareholder_code.isnumeric():
+            shareholder_code = int(shareholder_code)
+
         shareholder_type = request_payload.get('shareholder_type')
+        if isinstance(shareholder_type, str) and shareholder_type.isnumeric():
+            shareholder_type = int(shareholder_type)
+
         capital = request_payload.get('capital')
+        if isinstance(capital, str) and capital.isnumeric():
+            capital = int(capital)
+
         founder = request_payload.get('founder')
 
         if shareholder_type == SHAREHOLDER_TYPES.INDIVIDUAL:
@@ -160,14 +169,11 @@ class ShareholdersHandler(RequestHandler):
 
         self.set_status(201)
         return self.write_response({
-            "registration_code": inserted_shareholder["registration_code"],
-                "company_name": inserted_shareholder["company_name"],
-                "shareholder_first_name": inserted_shareholder["first_name"] if inserted_shareholder.get("first_name") else None,
-                "shareholder_last_name": inserted_shareholder["last_name"] if inserted_shareholder.get("last_name") else None,
-                "shareholder_company_name": inserted_shareholder["shareholder_company_name"] if inserted_shareholder.get("shareholder_company_name") else None,
-                "shareholder_type": inserted_shareholder["shareholder_type"],
-                "shareholder_code": inserted_shareholder["shareholder_code"],
-                "founder": inserted_shareholder["founder"],
-                "created_at": inserted_shareholder["created_at"],
-                "updated_at": inserted_shareholder["updated_at"]
+            "company_registration_code": inserted_shareholder["company_registration_code"],
+            "shareholder_code": inserted_shareholder["shareholder_code"],
+            "shareholder_type": inserted_shareholder["shareholder_type"],
+            "founder": inserted_shareholder["founder"],
+            "capital": inserted_shareholder["capital"],
+            "created_at": inserted_shareholder["created_at"],
+            "updated_at": inserted_shareholder["updated_at"]
         })

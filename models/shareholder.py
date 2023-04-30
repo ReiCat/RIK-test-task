@@ -151,7 +151,8 @@ async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
                     shareholder_type,
                     capital,
                     founder,
-                    created_at;
+                    created_at,
+                    updated_at;
                 """,
                 shareholder_data_model.company_registration_code,
                 shareholder_data_model.shareholder_code,

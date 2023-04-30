@@ -47,9 +47,9 @@ class CompaniesHandler(RequestHandler):
         if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
 
-        founder_personal_code = request_payload.get('founder_personal_code')
-        if isinstance(founder_personal_code, str) and founder_personal_code.isnumeric():
-            founder_personal_code = int(founder_personal_code)
+        founder_code = request_payload.get('founder_code')
+        if isinstance(founder_code, str) and founder_code.isnumeric():
+            founder_code = int(founder_code)
 
         founder_type = request_payload.get('founder_type')
         if isinstance(founder_type, str) and founder_type.isnumeric():
@@ -62,7 +62,7 @@ class CompaniesHandler(RequestHandler):
         if founder_type == SHAREHOLDER_TYPES.INDIVIDUAL:
             try:
                 shareholder = await get_person_by_personal_code(
-                    founder_personal_code
+                    founder_code
                 )
             except Exception as _:
                 self.set_status(500)
@@ -74,7 +74,7 @@ class CompaniesHandler(RequestHandler):
         else:
             try:
                 shareholder = await get_company_by_registration_code(
-                    founder_personal_code
+                    founder_code
                 )
             except Exception as _:
                 self.set_status(500)
@@ -111,15 +111,25 @@ class CompaniesHandler(RequestHandler):
         except Exception as e:
             status_code = 500
             message = "Internal server error"
-            if (
-                hasattr(e, "message")
-                and isinstance(e.message, str)
-                and e.message.startswith(
-                    "duplicate key value violates unique constraint"
-                )
-            ):
-                status_code = 400
-                message = "Company with such params already exists"
+            if hasattr(e, "message") and isinstance(e.message, str):
+                if e.message.startswith("duplicate key value violates unique constraint"):
+                    status_code = 400
+                    message = "Company with such params already exists"
+                elif "registration_code_min_length" in e.message:
+                    status_code = 400
+                    message = "Registration code should have 7 numbers"
+                elif "registration_code_max_length" in e.message:
+                    status_code = 400
+                    message = "Registration code should have 7 numbers"
+                elif "company_name_min_length" in e.message:
+                    status_code = 400
+                    message = "Company name should have at least 3 symbols"
+                elif "company_name_max_length" in e.message:
+                    status_code = 400
+                    message = "Company name should have at most 100 symbols"
+                elif "total_capital_amount_too_small" in e.message:
+                    status_code = 400
+                    message = "Company total capital should be at least 2500"
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
@@ -130,7 +140,7 @@ class CompaniesHandler(RequestHandler):
         try:
             shareholder_data_model = ShareholderDataModel(
                 company_registration_code=registration_code,
-                shareholder_code=founder_personal_code,
+                shareholder_code=founder_code,
                 shareholder_type=founder_type,
                 capital=founder_capital,
                 founder=True
