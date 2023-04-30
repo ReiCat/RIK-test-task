@@ -4,9 +4,10 @@ import settings
 from handlers import RequestHandler
 from datamodels.company_data_model import CompanyDataModel
 from datamodels.shareholder_data_model import ShareholderDataModel
-from models.company import insert_company, get_companies
+from models.company import insert_company, get_companies, get_company_by_registration_code
 from models.person import get_person_by_personal_code
 from models.shareholder import insert_shareholder
+from enums import SHAREHOLDER_TYPES
 
 class CompaniesHandler(RequestHandler):
     PATH = "/api/companies"
@@ -50,43 +51,45 @@ class CompaniesHandler(RequestHandler):
         if isinstance(founder_personal_code, str) and founder_personal_code.isnumeric():
             founder_personal_code = int(founder_personal_code)
 
+        founder_type = request_payload.get('founder_type')
+        if isinstance(founder_type, str) and founder_type.isnumeric():
+            founder_type = int(founder_type)
+
         founder_capital = request_payload.get('founder_capital')
         if isinstance(founder_capital, str) and founder_capital.isnumeric():
             founder_capital = int(founder_capital)
         
-        try:
-            raw_person = await get_person_by_personal_code(
-                founder_personal_code
-            )
-        except Exception as _:
-            self.set_status(500)
-            return self.write_error(
-                status_code=500,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Internal server error"
-            )
+        if founder_type == SHAREHOLDER_TYPES.INDIVIDUAL:
+            try:
+                shareholder = await get_person_by_personal_code(
+                    founder_personal_code
+                )
+            except Exception as _:
+                self.set_status(500)
+                return self.write_error(
+                    status_code=500,
+                    path=self.PATH.format(registration_code=registration_code),
+                    message="Internal server error"
+                )
+        else:
+            try:
+                shareholder = await get_company_by_registration_code(
+                    founder_personal_code
+                )
+            except Exception as _:
+                self.set_status(500)
+                return self.write_error(
+                    status_code=500,
+                    path=self.PATH.format(registration_code=registration_code),
+                    message="Internal server error"
+                )
         
-        if not raw_person:
+        if not shareholder:
             self.set_status(404)
             return self.write_error(
                 status_code=404,
                 path=self.PATH.format(registration_code=registration_code),
-                message="No person found"
-            )
-        
-        try:
-            shareholder_data_model = ShareholderDataModel(
-                company_registration_code=registration_code,
-                shareholder_personal_code=founder_personal_code,
-                capital=founder_capital,
-                founder=True
-            )
-        except Exception as _:
-            self.set_status(400)
-            return self.write_error(
-                status_code=400,
-                path=self.PATH,
-                message="Missing required arguments"
+                message="No shareholder found"
             )
 
         try:
@@ -122,6 +125,22 @@ class CompaniesHandler(RequestHandler):
                 status_code=status_code,
                 path=self.PATH,
                 message=message
+            )
+        
+        try:
+            shareholder_data_model = ShareholderDataModel(
+                company_registration_code=registration_code,
+                shareholder_code=founder_personal_code,
+                shareholder_type=founder_type,
+                capital=founder_capital,
+                founder=True
+            )
+        except Exception as _:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH,
+                message="Missing required arguments"
             )
         
         try:

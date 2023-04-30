@@ -8,22 +8,22 @@ class CompanySearchHandler(RequestHandler):
         company_name = self.get_argument('company_name', default="", strip=True)
         registration_code = self.get_argument('registration_code', default=0, strip=True)
         shareholder_name = self.get_argument('shareholder_name', default="", strip=True)
-        shareholder_personal_code = self.get_argument('shareholder_personal_code', default=0, strip=True)
+        shareholder_code = self.get_argument('shareholder_code', default=0, strip=True)
 
         self.clear()
 
         if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
                 
-        if isinstance(registration_code, str) and shareholder_personal_code.isnumeric():
-            shareholder_personal_code = int(shareholder_personal_code)
+        if isinstance(registration_code, str) and shareholder_code.isnumeric():
+            shareholder_code = int(shareholder_code)
         
         try:
             raw_company_list = await get_companies_by_search_params(
                 company_name,
                 registration_code,
                 shareholder_name,
-                shareholder_personal_code
+                shareholder_code
             )
         except Exception as _:
             self.set_status(500)

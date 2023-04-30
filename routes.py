@@ -21,5 +21,5 @@ routes = [
     tornado.web.url(r"/api/companies/search", CompanySearchHandler),
     tornado.web.url(r"/api/companies/(?P<registration_code>\d+)", CompanyHandler),
     tornado.web.url(r"/api/companies/(?P<registration_code>\d+)/shareholders", ShareholdersHandler),
-    tornado.web.url(r"/api/companies/(?P<registration_code>\d+)/shareholders/(?P<shareholder_personal_code>\d+)", ShareholderHandler),
+    tornado.web.url(r"/api/companies/(?P<registration_code>\d+)/shareholders/(?P<shareholder_code>\d+)", ShareholderHandler),
 ]

@@ -6,6 +6,7 @@ from datamodels.shareholder_data_model import ShareholderDataModel
 from models.shareholder import get_shareholders_by_company_registration_code, insert_shareholder
 from models.company import get_company_by_registration_code
 from models.person import get_person_by_personal_code
+from enums import SHAREHOLDER_TYPES
 
 class ShareholdersHandler(RequestHandler):
     PATH = "/api/companies/{registration_code}/shareholders"
@@ -31,10 +32,13 @@ class ShareholdersHandler(RequestHandler):
         shareholder_list = []
         for raw_shareholder in raw_shareholder_list:
             shareholder_list.append({
-                "company_registration_code": raw_shareholder["company_registration_code"],
-                "first_name": raw_shareholder["first_name"],
-                "last_name": raw_shareholder["last_name"],
-                "shareholder_personal_code": raw_shareholder["shareholder_personal_code"],
+                "registration_code": raw_shareholder["registration_code"],
+                "company_name": raw_shareholder["company_name"],
+                "shareholder_first_name": raw_shareholder["first_name"] if raw_shareholder.get("first_name") else None,
+                "shareholder_last_name": raw_shareholder["last_name"] if raw_shareholder.get("last_name") else None,
+                "shareholder_company_name": raw_shareholder["shareholder_company_name"] if raw_shareholder.get("shareholder_company_name") else None,
+                "shareholder_type": raw_shareholder["shareholder_type"],
+                "shareholder_code": raw_shareholder["shareholder_code"],
                 "founder": raw_shareholder["founder"],
                 "created_at": raw_shareholder["created_at"],
                 "updated_at": raw_shareholder["updated_at"]
@@ -67,34 +71,49 @@ class ShareholdersHandler(RequestHandler):
             )
         
         request_payload = tornado.escape.json_decode(body_data)
-        shareholder_personal_code = request_payload.get('shareholder_personal_code')
+        shareholder_code = request_payload.get('shareholder_code')
+        shareholder_type = request_payload.get('shareholder_type')
         capital = request_payload.get('capital')
         founder = request_payload.get('founder')
 
-        try:
-            raw_person = await get_person_by_personal_code(
-                shareholder_personal_code
-            )
-        except Exception as _:
-            self.set_status(500)
-            return self.write_error(
-                status_code=500,
-                path=self.PATH.format(registration_code=registration_code),
-                message="Internal server error"
-            )
-        
-        if not raw_person:
+        if shareholder_type == SHAREHOLDER_TYPES.INDIVIDUAL:
+            try:
+                shareholder = await get_person_by_personal_code(
+                    shareholder_code
+                )
+            except Exception as _:
+                self.set_status(500)
+                return self.write_error(
+                    status_code=500,
+                    path=self.PATH.format(registration_code=registration_code),
+                    message="Internal server error"
+                )
+        else:
+            try:
+                shareholder = await get_company_by_registration_code(
+                    shareholder_code
+                )
+            except Exception as _:
+                self.set_status(500)
+                return self.write_error(
+                    status_code=500,
+                    path=self.PATH.format(registration_code=registration_code),
+                    message="Internal server error"
+                )
+            
+        if not shareholder:
             self.set_status(404)
             return self.write_error(
                 status_code=404,
                 path=self.PATH.format(registration_code=registration_code),
-                message="No person found"
+                message="No shareholder found"
             )
 
         try:
             shareholder_data_model = ShareholderDataModel(
                 company_registration_code=registration_code,
-                shareholder_personal_code=shareholder_personal_code,
+                shareholder_code=shareholder_code,
+                shareholder_type=shareholder_type,
                 capital=capital,
                 founder=founder
             )
@@ -141,10 +160,14 @@ class ShareholdersHandler(RequestHandler):
 
         self.set_status(201)
         return self.write_response({
-            "company_registration_code": inserted_shareholder['company_registration_code'],
-            "shareholder_personal_code": inserted_shareholder['shareholder_personal_code'],
-            "capital": inserted_shareholder['capital'],
-            "founder": inserted_shareholder['founder'],
-            "created_at": inserted_shareholder["created_at"].strftime(settings.DT_FORMAT) if inserted_shareholder.get("created_at") else None,
-            "updated_at": inserted_shareholder["updated_at"].strftime(settings.DT_FORMAT) if inserted_shareholder.get("updated_at") else None
+            "registration_code": inserted_shareholder["registration_code"],
+                "company_name": inserted_shareholder["company_name"],
+                "shareholder_first_name": inserted_shareholder["first_name"] if inserted_shareholder.get("first_name") else None,
+                "shareholder_last_name": inserted_shareholder["last_name"] if inserted_shareholder.get("last_name") else None,
+                "shareholder_company_name": inserted_shareholder["shareholder_company_name"] if inserted_shareholder.get("shareholder_company_name") else None,
+                "shareholder_type": inserted_shareholder["shareholder_type"],
+                "shareholder_code": inserted_shareholder["shareholder_code"],
+                "founder": inserted_shareholder["founder"],
+                "created_at": inserted_shareholder["created_at"],
+                "updated_at": inserted_shareholder["updated_at"]
         })

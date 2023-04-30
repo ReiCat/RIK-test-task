@@ -21,7 +21,7 @@ class Company(Base):
 
     registration_code = Column(BigInteger, unique=True, primary_key=True)
     company_name = Column(String(100), unique=True, nullable=False)
-    total_capital = Column(Integer, nullable=False)
+    total_capital = Column(Integer)
     created_at = Column(DateTime, default=datetime.now, nullable=True)
     updated_at = Column(DateTime)
 
@@ -68,7 +68,7 @@ async def get_companies_by_search_params(
     company_name: str = None,
     registration_code: int = 0,
     shareholder_name: str = None,
-    shareholder_personal_code: int = 0
+    shareholder_code: int = 0
 ):
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
@@ -99,7 +99,7 @@ async def get_companies_by_search_params(
                 company_name,
                 int(registration_code),
                 shareholder_name,
-                int(shareholder_personal_code)
+                int(shareholder_code)
             )
     return companies
 
