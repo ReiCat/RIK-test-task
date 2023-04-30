@@ -56,36 +56,49 @@ async def get_companies_by_search_params(
     shareholder_name: str = None,
     shareholder_code: int = 0
 ):
+    if not isinstance(registration_code, int):
+        registration_code = 0
+
+    if not isinstance(shareholder_code, int):
+        shareholder_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             companies = await connection.fetch(
                 """
-                    SELECT
-                        registration_code, company_name
-                    FROM 
-                        companies
-                    WHERE
-                        COALESCE($1, '') <> '' AND $1 != '' AND LOWER(company_name) LIKE '%' || LOWER($1) || '%'
-                    OR
-                        registration_code = $2
-                    OR 
-                        registration_code = (
-                            SELECT
-                                company_registration_code
-                            FROM
-                                shareholders
-                            WHERE
-                                COALESCE($3, '') <> '' AND LOWER(first_name) LIKE '%' || LOWER($3) || '%'
-                            OR
-                                COALESCE($3, '') <> '' AND LOWER(last_name) LIKE '%' || LOWER($3) || '%'
-                            OR
-                                personal_code = $4
-                        );
+                SELECT
+                    registration_code, company_name
+                FROM 
+                    companies
+                WHERE
+                    COALESCE($1, '') <> '' AND $1 != '' AND LOWER(company_name) LIKE '%' || LOWER($1) || '%'
+                OR
+                    registration_code = $2
+                OR 
+                    registration_code = (
+                        select 
+                            company_registration_code
+                        from
+                            shareholders 
+                        where 
+                            shareholder_code = $4
+                        OR
+                            shareholder_code = (
+                                SELECT
+                                    personal_code
+                                FROM
+                                    persons
+                                WHERE
+                                    COALESCE($3, '') <> '' AND LOWER(first_name) LIKE '%' || LOWER($3) || '%'
+                                OR
+                                    COALESCE($3, '') <> '' AND LOWER(last_name) LIKE '%' || LOWER($3) || '%'
+                            )
+                    );
                 """,
                 company_name,
-                int(registration_code),
+                registration_code,
                 shareholder_name,
-                int(shareholder_code)
+                shareholder_code
             )
     return companies
 

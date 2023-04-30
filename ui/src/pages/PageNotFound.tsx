@@ -1,5 +1,6 @@
 import React from "react";
 import Alert from "react-bootstrap/Alert";
+import NavBar from "../components/NavBar";
 
 interface PageNotFoundProps {}
 

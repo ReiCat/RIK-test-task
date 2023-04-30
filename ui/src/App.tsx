@@ -10,7 +10,7 @@ import "./App.scss";
 
 function App() {
   return (
-    <div className="App">
+    <div className="App container">
       <Routes>
         {Router.buildRoutes(APP_ROUTERS)}
         <Route path="*" element={<PageNotFound />} />

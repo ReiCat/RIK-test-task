@@ -6,20 +6,19 @@ import Alert from "react-bootstrap/Alert";
 
 import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
-import CompanyClass from "../components/data/CompanyClass";
-import { fetchCompanies } from "../services/apiSource";
+import PersonClass from "../components/data/PersonClass";
+import { fetchPersons } from "../services/apiSource";
+import { toPathString } from "../services/api-client";
 
-interface CompaniesProps {}
+interface PersonsProps {}
 
-const Companies: React.FC<CompaniesProps> = (
-  props: CompaniesProps
-): JSX.Element => {
+const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
   const [show, setShow] = useState(false);
-  const [companies, setCompanies] = useState<CompanyClass[]>([]);
+  const [persons, setPersons] = useState<PersonClass[]>([]);
 
   useEffect(() => {
-    fetchCompanies().then((companyEntries) => {
-      setCompanies(companyEntries);
+    fetchPersons().then((personEntries) => {
+      setPersons(personEntries);
     });
   }, []);
 
@@ -28,27 +27,33 @@ const Companies: React.FC<CompaniesProps> = (
 
   return (
     <>
-      <NavBar active={LINK_PATHS.companies} />
+      <NavBar active={LINK_PATHS.persons} />
       <div className="d-flex justify-content-end mt-3">
         <Button variant="primary" onClick={handleShow}>
-          Add company
+          Add person
         </Button>
       </div>
 
-      {Array.isArray(companies) && companies.length > 0 ? (
+      {Array.isArray(persons) && persons.length > 0 ? (
         <Table className="mt-3" striped bordered hover>
           <thead>
             <tr>
-              <th>Registration code</th>
-              <th>Company Name</th>
+              <th>Personal code</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Created at</th>
+              <th>Updated at</th>
             </tr>
           </thead>
           <tbody>
-            {companies.map((company, index) => {
+            {persons.map((person, index) => {
               return (
                 <tr key={index}>
-                  <td>{company.registration_code}</td>
-                  <td>{company.company_name}</td>
+                  <td>{person.personal_code}</td>
+                  <td>{person.first_name}</td>
+                  <td>{person.last_name}</td>
+                  <td>{person.created_at}</td>
+                  <td>{person.updated_at}</td>
                 </tr>
               );
             })}
@@ -56,13 +61,13 @@ const Companies: React.FC<CompaniesProps> = (
         </Table>
       ) : (
         <Alert className="mt-3">
-          <b>No companies found</b>
+          <b>No persons found</b>
         </Alert>
       )}
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add company</Modal.Title>
+          <Modal.Title>Add person</Modal.Title>
         </Modal.Header>
         <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
         <Modal.Footer>
@@ -78,4 +83,4 @@ const Companies: React.FC<CompaniesProps> = (
   );
 };
 
-export default Companies;
+export default Persons;

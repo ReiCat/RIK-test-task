@@ -1,10 +1,11 @@
 import { LINK_PATHS } from "./paths";
-import PageNotFound from "../pages/PageNotFound";
 import HomePage from "../pages/HomePage";
+import Persons from "../pages/Persons";
+import PersonDetails from "../pages/PersonDetails";
 import Companies from "../pages/Companies";
 import CompanyDetails from "../pages/CompanyDetails";
 import Shareholders from "../pages/Shareholders";
-import ShareholderDetails from "../pages/ShareholderDetails";
+import PageNotFound from "../pages/PageNotFound";
 
 export interface routerItem {
   path: string;
@@ -17,11 +18,19 @@ export const APP_ROUTERS: routerItem[] = [
     children: <HomePage />,
   },
   {
+    path: LINK_PATHS.persons,
+    children: <Persons />,
+  },
+  {
+    path: LINK_PATHS.personDetails,
+    children: <PersonDetails />,
+  },
+  {
     path: LINK_PATHS.companies,
     children: <Companies />,
   },
   {
-    path: LINK_PATHS.companies,
+    path: LINK_PATHS.companyDetails,
     children: <CompanyDetails />,
   },
   {
