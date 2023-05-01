@@ -33,8 +33,6 @@ class CompanySearchHandler(RequestHandler):
                 message="Internal server error"
             )
         
-        print("AAAAAAAA", raw_company_list)
-        
         company_list = []
         for raw_company in raw_company_list:
             company_list.append({

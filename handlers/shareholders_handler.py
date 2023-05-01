@@ -38,6 +38,7 @@ class ShareholdersHandler(RequestHandler):
                 "shareholder_company_name": raw_shareholder["shareholder_company_name"] if raw_shareholder.get("shareholder_company_name") else None,
                 "shareholder_type": raw_shareholder["shareholder_type"],
                 "shareholder_code": raw_shareholder["shareholder_code"],
+                "shareholder_capital": raw_shareholder["shareholder_capital"],
                 "founder": raw_shareholder["founder"],
                 "created_at": raw_shareholder["created_at"],
                 "updated_at": raw_shareholder["updated_at"]

@@ -1,8 +1,9 @@
 export default class CompanyClass {
   company_name: string = "";
   registration_code: number = 0;
-  shareholder_name: string = "";
-  shareholder_code: number = 0;
+  total_capital: number = 0;
+  created_at: string = "";
+  updated_at: string = "";
 
   getConstructorFor(): any | null {
     return CompanyClass;
@@ -17,7 +18,7 @@ export default class CompanyClass {
   setValues(companyClass: CompanyClass) {
     this.company_name = companyClass.company_name;
     this.registration_code = companyClass.registration_code;
-    this.shareholder_name = companyClass.shareholder_name;
-    this.shareholder_code = companyClass.shareholder_code;
+    this.created_at = companyClass.created_at;
+    this.updated_at = companyClass.updated_at;
   }
 }

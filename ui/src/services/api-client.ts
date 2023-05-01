@@ -56,6 +56,17 @@ async function request<T = any, R = any>(config: AxiosRequestConfig, constructor
     return Promise.resolve(obj);
   }
 
+  // axios(config).then((resp) => {
+  //   if (resp.statusText === "OK") {
+  //     const obj = objectize(resp.data, constructor);
+  //     return Promise.resolve(obj);
+  //   }
+  // }).catch((error) => {
+  //   if (error.response) {
+  //     return error
+  //   }
+  // })
+
   return resp;
 };
 

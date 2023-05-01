@@ -40,7 +40,7 @@ async def get_shareholders_by_company_registration_code(company_registration_cod
                     p.last_name, 
                     sh.shareholder_type, 
                     sh.shareholder_code, 
-                    sh.capital, 
+                    sh.capital as shareholder_capital, 
                     sh.founder, 
                     c2.company_name as shareholder_company_name,
                     sh.created_at,

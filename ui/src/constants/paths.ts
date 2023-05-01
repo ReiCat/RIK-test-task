@@ -1,7 +1,7 @@
 export enum LINK_PATHS {
   homePage = "/",
   persons = "/persons",
-  personDetails = "/companies/:personalCode",
+  personDetails = "/persons/:personalCode",
   companies = "/companies",
   companyDetails = "/companies/:registrationCode",
   companiesSearch = "/companies/search",

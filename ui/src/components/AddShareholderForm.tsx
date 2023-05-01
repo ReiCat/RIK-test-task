@@ -22,22 +22,22 @@ const AddShareholderForm: React.FC<AddShareholderFormProps> = (
 
   const companyForm = useFormik({
     initialValues: {
-      company_name: company?.company_name ? company?.company_name : "",
-      registration_code: company?.registration_code
-        ? company?.registration_code
-        : 0,
-      shareholder_name: company?.shareholder_name
-        ? company.shareholder_name
-        : "",
-      shareholder_code: company?.shareholder_code
-        ? company?.shareholder_code
-        : 0,
+      // company_name: company?.company_name ? company?.company_name : "",
+      // registration_code: company?.registration_code
+      //   ? company?.registration_code
+      //   : 0,
+      // shareholder_name: company?.shareholder_name
+      //   ? company.shareholder_name
+      //   : "",
+      // shareholder_code: company?.shareholder_code
+      //   ? company?.shareholder_code
+      //   : 0,
     },
     validationSchema: Yup.object({
-      company_name: Yup.string(),
-      registration_code: Yup.number(),
-      shareholder_name: Yup.string(),
-      shareholder_code: Yup.number(),
+      // company_name: Yup.string(),
+      // registration_code: Yup.number(),
+      // shareholder_name: Yup.string(),
+      // shareholder_code: Yup.number(),
     }),
     onSubmit: async (values) => {
       console.log(values);

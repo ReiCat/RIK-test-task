@@ -17,8 +17,8 @@ export async function fetchCompany(registration_code: number): Promise<CompanyCl
   return await Api.get<CompanyClass>(`${ApiPaths.PATH_COMPANIES}/${registration_code}`);
 };
 
-export async function updateCompany(company: CompanyClass): Promise<CompanyClass> {
-  return await Api.put<PersonClass>(`${ApiPaths.PATH_COMPANIES}/${company.registration_code}`, company);
+export async function updateCompany(registration_code: number, company: CompanyClass): Promise<CompanyClass> {
+  return await Api.put<PersonClass>(`${ApiPaths.PATH_COMPANIES}/${registration_code}`, company);
 };
 
 export async function deleteCompany(registration_code: number): Promise<number> {
@@ -60,7 +60,7 @@ export async function deletePerson(personal_code: number): Promise<number> {
 };
 
 export async function addCompanyShareholder(shareholder: ShareholderClass): Promise<ShareholderClass> {
-  return await Api.post<ShareholderClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.company_registration_code}/shareholders`, shareholder);
+  return await Api.post<ShareholderClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.registration_code}/shareholders`, shareholder);
 };
 
 export async function fetchCompanyShareholders(registration_code: number): Promise<ShareholderClass[]> {
@@ -68,7 +68,7 @@ export async function fetchCompanyShareholders(registration_code: number): Promi
 };
 
 export async function updateCompanyShareholder(shareholder: ShareholderClass): Promise<PersonClass> {
-  return await Api.put<PersonClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.company_registration_code}/shareholders/${shareholder.shareholder_code}`, shareholder);
+  return await Api.put<PersonClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.registration_code}/shareholders/${shareholder.shareholder_code}`, shareholder);
 };
 
 export async function deleteCompanyShareholder(company_registration_code: number, shareholder_code: number): Promise<number> {

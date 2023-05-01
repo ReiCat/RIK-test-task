@@ -8,7 +8,6 @@ import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
 import PersonClass from "../components/data/PersonClass";
 import { fetchPersons } from "../services/apiSource";
-import { toPathString } from "../services/api-client";
 
 interface PersonsProps {}
 

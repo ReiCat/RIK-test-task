@@ -3,54 +3,56 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import Alert from "react-bootstrap/Alert";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { updateCompany } from "../services/apiSource";
 
 import CompanyClass from "./data/CompanyClass";
 
-interface AddPersonFormProps {
-  company?: CompanyClass;
+interface EditCompanyFormProps {
+  registration_code: number;
+  company: CompanyClass;
 }
 
-const AddPersonForm: React.FC<AddPersonFormProps> = (
-  props: AddPersonFormProps
+const EditCompanyForm: React.FC<EditCompanyFormProps> = (
+  props: EditCompanyFormProps
 ): JSX.Element => {
-  const [company, setCompany] = useState<CompanyClass | undefined>(
-    props.company
-  );
+  const [company, setCompany] = useState<CompanyClass>(props.company);
+  const [companyUpdated, setCompanyUpdated] = useState<boolean>(false);
+
+  useEffect(() => {
+    setCompany(props.company);
+  }, [props.company]);
 
   const companyForm = useFormik({
     initialValues: {
-      // company_name: company?.company_name ? company?.company_name : "",
-      // registration_code: company?.registration_code
-      //   ? company?.registration_code
-      //   : 0,
-      // shareholder_name: company?.shareholder_name
-      //   ? company.shareholder_name
-      //   : "",
-      // shareholder_code: company?.shareholder_code
-      //   ? company?.shareholder_code
-      //   : 0,
+      company_name: company?.company_name ? company?.company_name : "",
+      registration_code: company?.registration_code
+        ? company?.registration_code
+        : 0,
+      total_capital: company?.total_capital ? company.total_capital : 0,
+      created_at: company?.created_at ? company?.created_at : "",
     },
     validationSchema: Yup.object({
-      // company_name: Yup.string(),
-      // registration_code: Yup.number(),
-      // shareholder_name: Yup.string(),
-      // shareholder_code: Yup.number(),
+      company_name: Yup.string(),
+      registration_code: Yup.number(),
+      total_capital: Yup.number(),
+      created_at: Yup.date(),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      // const newOutputStreamSettings: OutputStreamSettingsClass =
-      //   props.outputStreamSettings!.clone();
-      // newOutputStreamSettings.IP = values.IP;
-      // newOutputStreamSettings.PORT = values.PORT;
-      // newOutputStreamSettings.enabledDisabled =
-      //   values.enabledDisabled === "yes" ? "ON" : "OFF";
-      // newOutputStreamSettings._xsrf = getCookie("_xsrf");
-      // editOutputStreamSettings(newOutputStreamSettings).then(() => {
-      //   setMessage("Settings has been updated");
-      // });
+      const newCompanyClass: CompanyClass = new CompanyClass();
+      newCompanyClass.company_name = values.company_name.trim();
+      newCompanyClass.registration_code = values.registration_code;
+      newCompanyClass.total_capital = values.total_capital;
+      newCompanyClass.created_at = values.created_at;
+
+      updateCompany(props.registration_code, newCompanyClass)
+        .then((updatedCompany) => {
+          setCompanyUpdated(true);
+        })
+        .catch((err) => {});
     },
   });
 
@@ -68,6 +70,7 @@ const AddPersonForm: React.FC<AddPersonFormProps> = (
             type="text"
             placeholder="Company name"
             onChange={handleChange}
+            value={companyForm.values.company_name}
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
@@ -78,28 +81,29 @@ const AddPersonForm: React.FC<AddPersonFormProps> = (
             type="text"
             placeholder="Registration code"
             onChange={handleChange}
+            value={companyForm.values.registration_code}
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
       <Row className="mb-3">
-        <Form.Group as={Col} md="6" controlId="shareholder_name">
-          <Form.Label>Shareholder name</Form.Label>
+        <Form.Group as={Col} md="6" controlId="total_capital">
+          <Form.Label>Total Capital</Form.Label>
           <Form.Control
-            required
             type="text"
-            placeholder="Shareholder name"
+            placeholder="Total Capital"
             onChange={handleChange}
+            value={companyForm.values.total_capital}
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
-        <Form.Group as={Col} md="6" controlId="shareholder_code">
-          <Form.Label>Shareholder code</Form.Label>
+        <Form.Group as={Col} md="6" controlId="created_at">
+          <Form.Label>Created at</Form.Label>
           <Form.Control
-            required
             type="text"
-            placeholder="Shareholder code"
+            placeholder="Created at"
             onChange={handleChange}
+            value={companyForm.values.created_at}
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
@@ -113,10 +117,15 @@ const AddPersonForm: React.FC<AddPersonFormProps> = (
         />
       </Form.Group> */}
       <Button type="submit" variant="primary" size="lg">
-        Search
+        Edit
       </Button>
+      {companyUpdated ? (
+        <Alert variant="success" className="mt-3">
+          <b>Company has been updated!</b>
+        </Alert>
+      ) : null}
     </Form>
   );
 };
 
-export default AddPersonForm;
+export default EditCompanyForm;

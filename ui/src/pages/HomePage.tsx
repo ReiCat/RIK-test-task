@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 
 import NavBar from "../components/NavBar";
 import CompanySearchForm from "../components/CompanySearchForm";
@@ -25,6 +26,7 @@ const HomePage: React.FC<HomePageProps> = (
             <tr>
               <th>Registration code</th>
               <th>Company Name</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -33,6 +35,13 @@ const HomePage: React.FC<HomePageProps> = (
                 <tr key={index}>
                   <td>{company.registration_code}</td>
                   <td>{company.company_name}</td>
+                  <td>
+                    <Button
+                      href={`${LINK_PATHS.companies}/${company.registration_code}`}
+                    >
+                      Details
+                    </Button>
+                  </td>
                 </tr>
               );
             })}
