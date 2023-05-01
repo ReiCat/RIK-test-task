@@ -8,6 +8,7 @@ import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
 import CompanyClass from "../components/data/CompanyClass";
 import { fetchCompanies } from "../services/apiSource";
+import AddCompanyForm from "../components/AddCompanyForm";
 
 interface CompaniesProps {}
 
@@ -64,14 +65,16 @@ const Companies: React.FC<CompaniesProps> = (
         <Modal.Header closeButton>
           <Modal.Title>Add company</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+        <Modal.Body>
+          <AddCompanyForm />
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          {/* <Button variant="primary" onClick={handleClose}>
             Save Changes
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
     </>

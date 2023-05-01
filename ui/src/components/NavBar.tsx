@@ -2,6 +2,7 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { Link } from "react-router-dom";
 
 import menuData, { menuDataItem } from "../constants/menu";
 
@@ -18,7 +19,11 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
     return data.map((menuItem: menuDataItem, index: number) => {
       return (
         <li key={index}>
-          <Nav.Link className={isActive(menuItem.path)} href={menuItem.path}>
+          <Nav.Link
+            as={Link}
+            className={isActive(menuItem.path)}
+            to={menuItem.path}
+          >
             {menuItem.name}
           </Nav.Link>
         </li>
@@ -30,7 +35,7 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
     <>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand href="#home">Companies viewer</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">{renderMenu(menuData)}</Nav>

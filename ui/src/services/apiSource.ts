@@ -3,14 +3,15 @@ import CompanyClass from "../components/data/CompanyClass";
 import CompanySearchClass from "../components/data/CompanySearchClass";
 import PersonClass from "../components/data/PersonClass";
 import ShareholderClass from "../components/data/ShareholderClass";
+import AddCompanyClass from "../components/data/AddCompanyClass";
 import * as ApiPaths from "../constants/apiPaths";
 
 export async function fetchCompanies(): Promise<CompanyClass[]> {
   return await Api.get(ApiPaths.PATH_COMPANIES, CompanyClass);
 };
 
-export async function addCompany(company: CompanyClass): Promise<CompanyClass> {
-  return await Api.post<CompanyClass>(ApiPaths.PATH_COMPANIES, company);
+export async function addCompany(newCompany: AddCompanyClass): Promise<AddCompanyClass> {
+  return await Api.post<AddCompanyClass>(ApiPaths.PATH_COMPANIES, newCompany);
 };
 
 export async function fetchCompany(registration_code: number): Promise<CompanyClass> {
