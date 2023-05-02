@@ -28,7 +28,12 @@ class Shareholder(AbstractBase):
     founder = Column(Boolean, default=False)
 
 
-async def get_shareholders_by_company_registration_code(company_registration_code: int):
+async def get_shareholders_by_company_registration_code(
+    company_registration_code: int
+):
+    if not isinstance(company_registration_code, int):
+        company_registration_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             shareholders = await connection.fetch(
@@ -71,6 +76,12 @@ async def get_companies_by_shareholder_code_and_type(
         shareholder_code: int, 
         shareholder_type: int
 ):
+    if not isinstance(shareholder_code, int):
+        shareholder_code = 0
+
+    if not isinstance(shareholder_type, int):
+        shareholder_type = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             shareholders = await connection.fetch(
@@ -163,6 +174,12 @@ async def delete_shareholder(
         company_registration_code: int, 
         shareholder_code: int
 ):
+    if not isinstance(company_registration_code, int):
+        company_registration_code = 0
+
+    if not isinstance(shareholder_code, int):
+        shareholder_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             await connection.execute(

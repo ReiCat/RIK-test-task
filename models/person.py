@@ -53,6 +53,9 @@ async def insert_person(person_data_model: PersonDataModel):
 
 
 async def get_person_by_personal_code(personal_code: int):
+    if not isinstance(personal_code, int):
+        personal_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             person = await connection.fetchrow(
@@ -92,6 +95,9 @@ async def get_persons():
 
 
 async def delete_person(personal_code: int):
+    if not isinstance(personal_code, int):
+        personal_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             await connection.execute(
@@ -106,7 +112,13 @@ async def delete_person(personal_code: int):
     return True
 
 
-async def update_person(old_personal_code: int, person_data_model: PersonDataModel):
+async def update_person(
+    old_personal_code: int, 
+    person_data_model: PersonDataModel
+):
+    if not isinstance(old_personal_code, int):
+        old_personal_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             updated_person = await connection.fetchrow(

@@ -15,9 +15,9 @@ class CompanySearchHandler(RequestHandler):
         if isinstance(registration_code, str) and registration_code.isnumeric():
             registration_code = int(registration_code)
                 
-        if isinstance(registration_code, str) and shareholder_code.isnumeric():
+        if isinstance(shareholder_code, str) and shareholder_code.isnumeric():
             shareholder_code = int(shareholder_code)
-        
+
         try:
             raw_company_list = await get_companies_by_search_params(
                 company_name,

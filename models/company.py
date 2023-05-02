@@ -75,7 +75,7 @@ async def get_companies_by_search_params(
                 OR
                     registration_code = $2
                 OR 
-                    registration_code = (
+                    registration_code IN (
                         select 
                             company_registration_code
                         from
@@ -106,6 +106,9 @@ async def get_companies_by_search_params(
 async def get_company_by_registration_code(
     registration_code: int = 0,
 ):
+    if not isinstance(registration_code, int):
+        registration_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             company = await connection.fetchrow(
@@ -173,7 +176,14 @@ async def delete_company(registration_code: int):
     return True
 
 
-async def update_company(old_registration_code: int, company_data_model: CompanyDataModel):
+async def update_company(
+    old_registration_code: int, 
+    company_data_model: CompanyDataModel
+):
+
+    if not isinstance(old_registration_code, int):
+        old_registration_code = 0
+
     async with D.get('pool').acquire() as connection:
         async with connection.transaction():
             updated_company = await connection.fetchrow(
