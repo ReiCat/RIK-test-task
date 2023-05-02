@@ -139,7 +139,7 @@ const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
                 value={option.value}
                 type="radio"
                 defaultChecked={
-                  option.value === companyAddForm.values.founder_code
+                  option.value === companyAddForm.values.founder_type
                 }
                 label={option.name}
                 onChange={handleChange}
