@@ -27,8 +27,6 @@ export function objectize(obj: any, constructor?: new () => any): any {
     }
   } else if (isObject(obj)) {
     if (constructor != null) {
-      // console.log(constructor === Object.getPrototypeOf(obj).constructor);
-      // console.log("pre", obj, Object.getPrototypeOf(obj));
       const newObj = new constructor();
       for (const memberName of Object.keys(obj)) {
         const member = obj[memberName];
@@ -48,12 +46,7 @@ export function objectize(obj: any, constructor?: new () => any): any {
         }
       }
       obj = Object.assign(newObj, obj);
-      // console.log(constructor === Object.getPrototypeOf(obj).constructor);
-      // console.log("post", obj, Object.getPrototypeOf(obj));
     }
-    // else {
-    //   logWarning("Constructor not provided for JSON object:", obj);
-    // }
   }
   return obj;
 }

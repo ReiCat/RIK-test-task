@@ -10,7 +10,7 @@ export async function fetchCompanies(): Promise<CompanyClass[]> {
   return await Api.get(ApiPaths.PATH_COMPANIES, CompanyClass);
 };
 
-export async function addCompany(newCompany: AddCompanyClass): Promise<AddCompanyClass> {
+export async function addCompany(newCompany: AddCompanyClass): Promise<CompanyClass> {
   return await Api.post<AddCompanyClass>(ApiPaths.PATH_COMPANIES, newCompany);
 };
 

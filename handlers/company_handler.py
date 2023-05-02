@@ -57,7 +57,6 @@ class CompanyHandler(RequestHandler):
             )
         
         request_payload = tornado.escape.json_decode(body_data)
-        print("SUYKKA CJHANGE", registration_code, request_payload)
         company_name = request_payload.get('company_name')
         new_registration_code = request_payload.get('registration_code')
         created_at = request_payload.get('created_at')

@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, ChangeEvent } from "react";
+import React, { FunctionComponent, useState, ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -13,30 +13,57 @@ import AddCompanyClass from "./data/AddCompanyClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 import { LINK_PATHS } from "../constants/paths";
 
+type Option = {
+  [value: string]: any;
+};
+
+const founderTypeOptions: Option[] = [
+  {
+    value: 1,
+    name: "Individual",
+  },
+  {
+    value: 2,
+    name: "Legal",
+  },
+];
+
 interface AddCompanyFormProps {}
 
-const AddCompanyForm: React.FC<AddCompanyFormProps> = (
+const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
   props: AddCompanyFormProps
 ): JSX.Element => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const companyForm = useFormik({
+  const companyAddForm = useFormik({
     initialValues: {
       company_name: "",
-      registration_code: 0,
-      founder_code: 0,
+      registration_code: "",
+      founder_code: "",
       founder_type: SHAREHOLDER_TYPES.INDIVIDUAL,
-      founder_capital: 0,
+      founder_capital: "",
       created_at: "",
     },
     validationSchema: Yup.object({
-      company_name: Yup.string(),
-      registration_code: Yup.number(),
-      founder_code: Yup.number(),
-      founder_type: Yup.number(),
-      founder_capital: Yup.number(),
-      created_at: Yup.date(),
+      company_name: Yup.string()
+        .required()
+        .min(3, "Must be at least 3 symbols")
+        .max(100, "Must be at most 100 symbols"),
+      registration_code: Yup.string()
+        .required()
+        .matches(/^[0-9]+$/, "Must be only digits")
+        .min(7, "Must be exactly 7 digits")
+        .max(7, "Must be exactly 7 digits"),
+      founder_code: Yup.string()
+        .required()
+        .matches(/^[0-9]+$/, "Must be only digits"),
+      founder_capital: Yup.number()
+        .required()
+        .min(2500, "The amount must be at least 2500"),
+      created_at: Yup.date()
+        .nullable()
+        .max(new Date(), "Date of establishment should be earlier than today"),
     }),
     onSubmit: async (values) => {
       const newCompanyClass: AddCompanyClass = new AddCompanyClass();
@@ -48,21 +75,23 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = (
       newCompanyClass.created_at = values.created_at;
 
       addCompany(newCompanyClass)
-        .then((addedCompany) => {
-          navigate(`${LINK_PATHS.companies}/${addedCompany.registration_code}`);
+        .then((addedCompany: any) => {
+          navigate(
+            `${LINK_PATHS.companies}/${addedCompany.data.registration_code}`
+          );
         })
         .catch((err) => {
-          console.log("Add company error:", err);
+          setError(err.response.data.message);
         });
     },
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    companyForm.handleChange(e);
+    companyAddForm.handleChange(e);
   };
 
   return (
-    <Form noValidate onSubmit={companyForm.handleSubmit}>
+    <Form noValidate onSubmit={companyAddForm.handleSubmit}>
       <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="company_name">
           <Form.Label>Company name</Form.Label>
@@ -71,9 +100,9 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = (
             type="text"
             placeholder="Company name"
             onChange={handleChange}
-            value={companyForm.values.company_name}
+            value={companyAddForm.values.company_name}
+            isInvalid={!!companyAddForm.errors?.company_name}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="registration_code">
           <Form.Label>Registration code</Form.Label>
@@ -82,9 +111,9 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = (
             type="text"
             placeholder="Registration code"
             onChange={handleChange}
-            value={companyForm.values.registration_code}
+            value={companyAddForm.values.registration_code}
+            isInvalid={!!companyAddForm.errors?.registration_code}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
       <Row className="mb-3">
@@ -95,20 +124,28 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = (
             type="text"
             placeholder="Founder code"
             onChange={handleChange}
-            value={companyForm.values.founder_code}
+            value={companyAddForm.values.founder_code}
+            isInvalid={!!companyAddForm.errors?.founder_code}
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="founder_type">
           <Form.Label>Founder type</Form.Label>
-          <Form.Control
-            required
-            type="radio"
-            placeholder="Founder type"
-            onChange={handleChange}
-            value={companyForm.values.founder_type}
-          />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+          {founderTypeOptions.map((option, index) => {
+            return (
+              <Form.Check
+                key={index}
+                name="founder_type"
+                value={option.value}
+                type="radio"
+                defaultChecked={
+                  option.value === companyAddForm.values.founder_code
+                }
+                label={option.name}
+                onChange={handleChange}
+              />
+            );
+          })}
         </Form.Group>
       </Row>
       <Row className="mb-3">
@@ -119,34 +156,30 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = (
             type="text"
             placeholder="Founder capital"
             onChange={handleChange}
-            value={companyForm.values.founder_capital}
+            value={companyAddForm.values.founder_capital}
+            isInvalid={!!companyAddForm.errors?.founder_capital}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="created_at">
           <Form.Label>Date of establishment</Form.Label>
           <Form.Control
             required
-            type="text"
+            type="date"
             placeholder="Date of establishment"
             onChange={handleChange}
-            value={companyForm.values.created_at}
+            value={companyAddForm.values.created_at}
+            isInvalid={!!companyAddForm.errors?.created_at}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
-      {/* <Form.Group className="mb-3">
-        <Form.Check
-          required
-          label="Agree to terms and conditions"
-          feedback="You must agree before submitting."
-          feedbackType="invalid"
-        />
-      </Form.Group> */}
       <Button type="submit" variant="primary" size="lg">
         Add
       </Button>
-      {error ? <Alert variant="primary">{error}</Alert> : null}
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </Form>
   );
 };

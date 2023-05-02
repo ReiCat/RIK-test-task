@@ -2,10 +2,10 @@ import { SHAREHOLDER_TYPES } from "../../constants/enums"
 
 export default class AddCompanyClass {
   company_name: string = "";
-  registration_code: number = 0;
-  founder_code: number = 0;
+  registration_code: string = "";
+  founder_code: string = "";
   founder_type: SHAREHOLDER_TYPES = SHAREHOLDER_TYPES.INDIVIDUAL;
-  founder_capital: number = 0;
+  founder_capital: string = "";
   created_at: string = "";
   updated_at: string = "";
 
