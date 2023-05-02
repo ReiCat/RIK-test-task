@@ -1,8 +1,9 @@
-import React, { ChangeEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import Alert from "react-bootstrap/Alert";
 
 import { useFormik } from "formik";
 
@@ -16,6 +17,8 @@ interface CompanySearchFormProps {
 const CompanySearchForm: React.FC<CompanySearchFormProps> = (
   props: CompanySearchFormProps
 ): JSX.Element => {
+  const [error, setError] = useState<string>("");
+
   const companyForm = useFormik({
     initialValues: {
       company_name: "",
@@ -29,9 +32,13 @@ const CompanySearchForm: React.FC<CompanySearchFormProps> = (
       newCompanySearchClass.registration_code = values.registration_code;
       newCompanySearchClass.shareholder_name = values.shareholder_name;
       newCompanySearchClass.shareholder_code = values.shareholder_code;
-      searchCompanies(newCompanySearchClass).then((data) => {
-        props.setCompanies(data);
-      });
+      searchCompanies(newCompanySearchClass)
+        .then((data) => {
+          props.setCompanies(data);
+        })
+        .catch((err) => {
+          setError(err.response.data.message);
+        });
     },
   });
 
@@ -80,6 +87,11 @@ const CompanySearchForm: React.FC<CompanySearchFormProps> = (
       <Button type="submit" variant="primary" size="lg">
         Search
       </Button>
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </Form>
   );
 };

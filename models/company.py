@@ -156,7 +156,7 @@ async def insert_company(
                 company_data_model.registration_code,
                 company_data_model.company_name,
                 company_data_model.total_capital,
-                datetime.now()
+                company_data_model.created_at
             )
     return inserted_company
 

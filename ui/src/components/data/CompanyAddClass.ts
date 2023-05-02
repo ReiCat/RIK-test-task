@@ -1,6 +1,6 @@
 import { SHAREHOLDER_TYPES } from "../../constants/enums"
 
-export default class AddCompanyClass {
+export default class CompanyAddClass {
   company_name: string = "";
   registration_code: string = "";
   founder_code: string = "";
@@ -10,16 +10,16 @@ export default class AddCompanyClass {
   updated_at: string = "";
 
   getConstructorFor(): any | null {
-    return AddCompanyClass;
+    return CompanyAddClass;
   }
 
-  clone(): AddCompanyClass {
-    const newCompanyClass = new AddCompanyClass();
-    newCompanyClass.setValues(this);
-    return newCompanyClass;
+  clone(): CompanyAddClass {
+    const newCompanyAddClass = new CompanyAddClass();
+    newCompanyAddClass.setValues(this);
+    return newCompanyAddClass;
   }
 
-  setValues(companyClass: AddCompanyClass) {
+  setValues(companyClass: CompanyAddClass) {
     this.company_name = companyClass.company_name;
     this.registration_code = companyClass.registration_code;
     this.created_at = companyClass.created_at;

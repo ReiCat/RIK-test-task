@@ -1,5 +1,6 @@
 import tornado
 import settings
+from datetime import datetime
 
 from handlers import RequestHandler
 from datamodels.company_data_model import CompanyDataModel
@@ -58,6 +59,10 @@ class CompaniesHandler(RequestHandler):
         founder_capital = request_payload.get('founder_capital')
         if isinstance(founder_capital, str) and founder_capital.isnumeric():
             founder_capital = int(founder_capital)
+
+        created_at = request_payload.get('created_at')
+        if isinstance(created_at, str) and len(created_at) > 0:
+            created_at = datetime.strptime(created_at, settings.DT_FORMAT)
         
         if founder_type == SHAREHOLDER_TYPES.INDIVIDUAL:
             try:
@@ -97,6 +102,7 @@ class CompaniesHandler(RequestHandler):
                 company_name=company_name,
                 registration_code=registration_code,
                 total_capital=founder_capital,
+                created_at=created_at
             )
         except Exception as _:
             self.set_status(400)

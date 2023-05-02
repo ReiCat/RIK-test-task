@@ -93,7 +93,9 @@ async def get_companies_by_shareholder_code_and_type(
                     shareholder_type,
                     capital,
                     founder,
-                    c.company_name
+                    c.company_name,
+                    sh.created_at,
+                    sh.updated_at
                 FROM 
                     shareholders sh
                 LEFT JOIN
@@ -161,11 +163,13 @@ async def insert_shareholder(shareholder_data_model: ShareholderDataModel):
                             shareholders 
                         WHERE 
                             company_registration_code = $1
-                    )
+                    ),
+                    updated_at = $2
                 WHERE 
                     companies.registration_code = $1;
                 """,
-                shareholder_data_model.company_registration_code
+                shareholder_data_model.company_registration_code,
+                datetime.now()
             )
     return inserted_shareholder
 
@@ -188,7 +192,8 @@ async def delete_shareholder(
                     UPDATE
                         companies
                     SET
-                        total_capital = total_capital - subquery.capital
+                        total_capital = total_capital - subquery.capital,
+                        updated_at = $3
                     FROM
                     (
                         SELECT
@@ -219,7 +224,8 @@ async def delete_shareholder(
                     u.shareholder_code = sh.shareholder_code;
                 """,
                 company_registration_code,
-                shareholder_code
+                shareholder_code,
+                datetime.now()
             )
     return True
 

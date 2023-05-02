@@ -42,8 +42,8 @@ class PersonHandler(RequestHandler):
                 "personal_code": raw_person["personal_code"],
                 "first_name": raw_person["first_name"],
                 "last_name": raw_person["last_name"],
-                "created_at": raw_person["created_at"],
-                "updated_at": raw_person["updated_at"]
+                "created_at": raw_person["created_at"].strftime(settings.DT_FORMAT) if raw_person.get("created_at") else None,
+                "updated_at": raw_person["updated_at"].strftime(settings.DT_FORMAT) if raw_person.get("updated_at") else None
             })
 
     async def put(self, personal_code: int):

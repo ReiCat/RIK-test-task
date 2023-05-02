@@ -1,5 +1,6 @@
 import tornado
 
+import settings
 from handlers import RequestHandler
 from datamodels.shareholder_data_model import ShareholderDataModel
 from models.shareholder import get_shareholders_by_company_registration_code, insert_shareholder
@@ -7,7 +8,7 @@ from models.company import get_company_by_registration_code
 from models.person import get_person_by_personal_code
 from enums import SHAREHOLDER_TYPES
 
-class ShareholdersHandler(RequestHandler):
+class CompanyShareholdersHandler(RequestHandler):
     PATH = "/api/companies/{registration_code}/shareholders"
 
     async def get(self, registration_code: int):
@@ -40,8 +41,8 @@ class ShareholdersHandler(RequestHandler):
                 "shareholder_code": raw_shareholder["shareholder_code"],
                 "shareholder_capital": raw_shareholder["shareholder_capital"],
                 "founder": raw_shareholder["founder"],
-                "created_at": raw_shareholder["created_at"],
-                "updated_at": raw_shareholder["updated_at"]
+                "created_at": raw_shareholder["created_at"].strftime(settings.DT_FORMAT) if raw_shareholder.get("created_at") else None,
+                "updated_at": raw_shareholder["updated_at"].strftime(settings.DT_FORMAT) if raw_shareholder.get("updated_at") else None
             })
 
         return self.write_response(shareholder_list)
@@ -174,6 +175,6 @@ class ShareholdersHandler(RequestHandler):
             "shareholder_type": inserted_shareholder["shareholder_type"],
             "founder": inserted_shareholder["founder"],
             "capital": inserted_shareholder["capital"],
-            "created_at": inserted_shareholder["created_at"],
-            "updated_at": inserted_shareholder["updated_at"]
+            "created_at": inserted_shareholder["created_at"].strftime(settings.DT_FORMAT) if inserted_shareholder.get("created_at") else None,
+            "updated_at": inserted_shareholder["updated_at"].strftime(settings.DT_FORMAT) if inserted_shareholder.get("updated_at") else None
         })

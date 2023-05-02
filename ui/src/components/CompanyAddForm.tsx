@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { addCompany } from "../services/apiSource";
-import AddCompanyClass from "./data/AddCompanyClass";
+import CompanyAddClass from "./data/CompanyAddClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 import { LINK_PATHS } from "../constants/paths";
 
@@ -28,10 +28,10 @@ const founderTypeOptions: Option[] = [
   },
 ];
 
-interface AddCompanyFormProps {}
+interface CompanyAddFormProps {}
 
-const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
-  props: AddCompanyFormProps
+const CompanyAddForm: FunctionComponent<CompanyAddFormProps> = (
+  props: CompanyAddFormProps
 ): JSX.Element => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
@@ -66,15 +66,15 @@ const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
         .max(new Date(), "Date of establishment should be earlier than today"),
     }),
     onSubmit: async (values) => {
-      const newCompanyClass: AddCompanyClass = new AddCompanyClass();
-      newCompanyClass.company_name = values.company_name.trim();
-      newCompanyClass.registration_code = values.registration_code;
-      newCompanyClass.founder_code = values.founder_code;
-      newCompanyClass.founder_type = values.founder_type;
-      newCompanyClass.founder_capital = values.founder_capital;
-      newCompanyClass.created_at = values.created_at;
+      const newCompany: CompanyAddClass = new CompanyAddClass();
+      newCompany.company_name = values.company_name.trim();
+      newCompany.registration_code = values.registration_code;
+      newCompany.founder_code = values.founder_code;
+      newCompany.founder_type = values.founder_type;
+      newCompany.founder_capital = values.founder_capital;
+      newCompany.created_at = values.created_at;
 
-      addCompany(newCompanyClass)
+      addCompany(newCompany)
         .then((addedCompany: any) => {
           navigate(
             `${LINK_PATHS.companies}/${addedCompany.data.registration_code}`
@@ -91,7 +91,7 @@ const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
   };
 
   return (
-    <Form noValidate onSubmit={companyAddForm.handleSubmit}>
+    <Form onSubmit={companyAddForm.handleSubmit}>
       <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="company_name">
           <Form.Label>Company name</Form.Label>
@@ -184,4 +184,4 @@ const AddCompanyForm: FunctionComponent<AddCompanyFormProps> = (
   );
 };
 
-export default AddCompanyForm;
+export default CompanyAddForm;

@@ -8,20 +8,25 @@ import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
 import CompanyClass from "../components/data/CompanyClass";
 import { fetchCompanies } from "../services/apiSource";
-import AddCompanyForm from "../components/AddCompanyForm";
+import CompanyAddForm from "../components/CompanyAddForm";
 
 interface CompaniesProps {}
 
 const Companies: React.FC<CompaniesProps> = (
   props: CompaniesProps
 ): JSX.Element => {
+  const [error, setError] = useState<string>("");
   const [show, setShow] = useState(false);
   const [companies, setCompanies] = useState<CompanyClass[]>([]);
 
   useEffect(() => {
-    fetchCompanies().then((companyEntries) => {
-      setCompanies(companyEntries);
-    });
+    fetchCompanies()
+      .then((companyEntries) => {
+        setCompanies(companyEntries);
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+      });
   }, []);
 
   const handleClose = () => setShow(false);
@@ -73,17 +78,20 @@ const Companies: React.FC<CompaniesProps> = (
           <Modal.Title>Add company</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddCompanyForm />
+          <CompanyAddForm />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          {/* <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button> */}
         </Modal.Footer>
       </Modal>
+
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </>
   );
 };

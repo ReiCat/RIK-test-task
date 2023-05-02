@@ -9,12 +9,12 @@ import * as Yup from "yup";
 
 import CompanyClass from "./data/CompanyClass";
 
-interface AddPersonFormProps {
+interface ShareholderAddFormProps {
   company?: CompanyClass;
 }
 
-const AddPersonForm: React.FC<AddPersonFormProps> = (
-  props: AddPersonFormProps
+const ShareholderAddForm: React.FC<ShareholderAddFormProps> = (
+  props: ShareholderAddFormProps
 ): JSX.Element => {
   const [company, setCompany] = useState<CompanyClass | undefined>(
     props.company
@@ -119,4 +119,4 @@ const AddPersonForm: React.FC<AddPersonFormProps> = (
   );
 };
 
-export default AddPersonForm;
+export default ShareholderAddForm;

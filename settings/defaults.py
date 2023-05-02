@@ -16,7 +16,7 @@ SERVER_PORT = 8000
 DEBUG = False
 COOKIE_SECRET = "teJAyHREJhgQpSqG98LyEwr"
 XSRF_COOKIES = True
-DT_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+DT_FORMAT = "%Y-%m-%d"
 
 """ LOG SETTINGS """
 LOG_LEVEL = logging.INFO

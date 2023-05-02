@@ -88,10 +88,10 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
       </Row>
       <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="total_capital">
-          <Form.Label>Total Capital</Form.Label>
+          <Form.Label>Total capital</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Total Capital"
+            placeholder="Total capital"
             onChange={handleChange}
             value={companyForm.values.total_capital}
           />

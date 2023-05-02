@@ -8,17 +8,23 @@ import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
 import PersonClass from "../components/data/PersonClass";
 import { fetchPersons } from "../services/apiSource";
+import PersonAddForm from "../components/PersonAddForm";
 
 interface PersonsProps {}
 
 const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
+  const [error, setError] = useState<string>("");
   const [show, setShow] = useState(false);
   const [persons, setPersons] = useState<PersonClass[]>([]);
 
   useEffect(() => {
-    fetchPersons().then((personEntries) => {
-      setPersons(personEntries);
-    });
+    fetchPersons()
+      .then((personEntries) => {
+        setPersons(personEntries);
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+      });
   }, []);
 
   const handleClose = () => setShow(false);
@@ -38,8 +44,8 @@ const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
           <thead>
             <tr>
               <th>Personal code</th>
-              <th>First Name</th>
-              <th>Last Name</th>
+              <th>First name</th>
+              <th>Last name</th>
               <th>Created at</th>
               <th>Updated at</th>
               <th></th>
@@ -76,16 +82,21 @@ const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
         <Modal.Header closeButton>
           <Modal.Title>Add person</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+        <Modal.Body>
+          <PersonAddForm />
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
         </Modal.Footer>
       </Modal>
+
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </>
   );
 };

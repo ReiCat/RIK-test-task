@@ -7,17 +7,17 @@ import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
 import { fetchCompany, fetchCompanyShareholders } from "../services/apiSource";
 import CompanyClass from "../components/data/CompanyClass";
-import ShareholderClass from "../components/data/ShareholderClass";
-import EditCompanyForm from "../components/EditCompanyForm";
+import CompanyShareholderClass from "../components/data/CompanyShareholderClass";
 
 interface CompanyDetailsProps {}
 
 const CompanyDetails: React.FC<CompanyDetailsProps> = (
   props: CompanyDetailsProps
 ): JSX.Element => {
+  const [error, setError] = useState<string>("");
   const [company, setCompany] = useState<CompanyClass | undefined>();
   const [companyShareholders, setCompanyShareholders] = useState<
-    ShareholderClass[]
+    CompanyShareholderClass[]
   >([]);
   let { registrationCode } = useParams();
 
@@ -30,8 +30,8 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
       .then((companyEntry) => {
         setCompany(companyEntry);
       })
-      .catch((error) => {
-        return;
+      .catch((err) => {
+        setError(err.response.data.message);
       });
   }, []);
 
@@ -52,10 +52,10 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Registration Code</th>
+              <th>Registration code</th>
               <th>Company Name</th>
-              <th>Total Capital</th>
-              <th>Created At</th>
+              <th>Total capital</th>
+              <th>Created at</th>
             </tr>
           </thead>
           <tbody>
@@ -79,7 +79,7 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
         <Table className="mt-3" striped bordered hover>
           <thead>
             <tr>
-              <th>Shareholder Code</th>
+              <th>Shareholder code</th>
               <th>Shareholder type</th>
               <th>Capital</th>
               <th>Founder</th>
@@ -107,6 +107,12 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
           <b>No shareholders found</b>
         </Alert>
       )}
+
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </>
   );
 };

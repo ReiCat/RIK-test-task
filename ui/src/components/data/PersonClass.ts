@@ -10,9 +10,9 @@ export default class PersonClass {
   }
 
   clone(): PersonClass {
-    const newPerson = new PersonClass();
-    newPerson.setValues(this);
-    return newPerson;
+    const newPersonClass = new PersonClass();
+    newPersonClass.setValues(this);
+    return newPersonClass;
   }
 
   setValues(person: PersonClass) {
