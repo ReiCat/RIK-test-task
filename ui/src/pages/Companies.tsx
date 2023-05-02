@@ -50,6 +50,13 @@ const Companies: React.FC<CompaniesProps> = (
                 <tr key={index}>
                   <td>{company.registration_code}</td>
                   <td>{company.company_name}</td>
+                  <td>
+                    <Button
+                      href={`${LINK_PATHS.companies}/${company.registration_code}`}
+                    >
+                      Details
+                    </Button>
+                  </td>
                 </tr>
               );
             })}

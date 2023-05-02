@@ -42,6 +42,7 @@ const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
               <th>Last Name</th>
               <th>Created at</th>
               <th>Updated at</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +54,13 @@ const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
                   <td>{person.last_name}</td>
                   <td>{person.created_at}</td>
                   <td>{person.updated_at}</td>
+                  <td>
+                    <Button
+                      href={`${LINK_PATHS.persons}/${person.personal_code}`}
+                    >
+                      Details
+                    </Button>
+                  </td>
                 </tr>
               );
             })}
