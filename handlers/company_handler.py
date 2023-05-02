@@ -37,8 +37,8 @@ class CompanyHandler(RequestHandler):
             "registration_code": raw_company["registration_code"],
             "company_name": raw_company["company_name"],
             "total_capital": raw_company["total_capital"],
-            "created_at": raw_company["created_at"].strftime(settings.DT_FORMAT) if raw_company.get("created_at") else None,
-            "updated_at": raw_company["updated_at"].strftime(settings.DT_FORMAT) if raw_company.get("updated_at") else None
+            "created_at": self.extract_datetime(raw_company["created_at"]),
+            "updated_at": self.extract_datetime(raw_company["updated_at"])
         })
 
     async def put(self, registration_code: int):
@@ -135,8 +135,8 @@ class CompanyHandler(RequestHandler):
             "registration_code": updated_company['registration_code'],
             "company_name": updated_company['company_name'],
             "total_capital": updated_company['total_capital'],
-            "created_at": updated_company["created_at"].strftime(settings.DT_FORMAT) if updated_company.get("created_at") else None,
-            "updated_at": updated_company["updated_at"].strftime(settings.DT_FORMAT) if updated_company.get("updated_at") else None
+            "created_at": self.extract_datetime(updated_company["created_at"]),
+            "updated_at": self.extract_datetime(updated_company["updated_at"])
         })
 
     async def delete(self, registration_code: int):

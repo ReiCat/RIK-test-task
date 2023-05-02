@@ -39,3 +39,6 @@ class RequestHandler(tornado.web.RequestHandler):
                 "message": message,
                 "path": kwargs.get("path")
             })
+
+    def extract_datetime(self, date_field):
+        return date_field.strftime(settings.DT_FORMAT) if date_field else None

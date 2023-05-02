@@ -1,6 +1,5 @@
 import tornado
 
-import settings
 from handlers import RequestHandler
 from datamodels.shareholder_data_model import ShareholderDataModel
 from models.shareholder import delete_shareholder, update_shareholder
@@ -88,8 +87,8 @@ class ShareholderHandler(RequestHandler):
             "shareholder_code": updated_shareholder['shareholder_code'],
             "capital": updated_shareholder['capital'],
             "founder": updated_shareholder['founder'],
-            "created_at": updated_shareholder["created_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("created_at") else None,
-            "updated_at": updated_shareholder["updated_at"].strftime(settings.DT_FORMAT) if updated_shareholder.get("updated_at") else None
+            "created_at": self.extract_datetime(updated_shareholder["created_at"]),
+            "updated_at": self.extract_datetime(updated_shareholder["updated_at"])
         })
         
 

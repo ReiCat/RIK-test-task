@@ -1,6 +1,5 @@
 import tornado
 
-import settings
 from handlers import RequestHandler
 from datamodels.person_data_model import PersonDataModel
 from models.person import get_persons, insert_person
@@ -27,8 +26,8 @@ class PersonsHandler(RequestHandler):
                 "personal_code": raw_person["personal_code"],
                 "first_name": raw_person["first_name"],
                 "last_name": raw_person["last_name"],
-                "created_at": raw_person["created_at"].strftime(settings.DT_FORMAT) if raw_person.get("created_at") else None,
-                "updated_at": raw_person["updated_at"].strftime(settings.DT_FORMAT) if raw_person.get("updated_at") else None
+                "created_at": self.extract_datetime(raw_person["created_at"]),
+                "updated_at": self.extract_datetime(raw_person["updated_at"])
             })
 
         return self.write_response(persons)
@@ -90,6 +89,6 @@ class PersonsHandler(RequestHandler):
             "personal_code": inserted_person['personal_code'],
             "first_name": inserted_person['first_name'],
             "last_name": inserted_person['last_name'],
-            "created_at": inserted_person["created_at"].strftime(settings.DT_FORMAT) if inserted_person.get("created_at") else None,
-            "updated_at": inserted_person["updated_at"].strftime(settings.DT_FORMAT) if inserted_person.get("updated_at") else None
+            "created_at": self.extract_datetime(inserted_person["created_at"]),
+            "updated_at": self.extract_datetime(inserted_person["updated_at"])
         })

@@ -32,8 +32,8 @@ class CompaniesHandler(RequestHandler):
                 "registration_code": raw_company['registration_code'],
                 "company_name": raw_company['company_name'],
                 "total_capital": raw_company['total_capital'],
-                "created_at": raw_company["created_at"].strftime(settings.DT_FORMAT) if raw_company.get("created_at") else None,
-                "updated_at": raw_company["updated_at"].strftime(settings.DT_FORMAT) if raw_company.get("updated_at") else None
+                "created_at": self.extract_datetime(raw_company["created_at"]),
+                "updated_at": self.extract_datetime(raw_company["updated_at"])
             })
 
         return self.write_response(companies)
@@ -185,6 +185,6 @@ class CompaniesHandler(RequestHandler):
             "registration_code": inserted_company['registration_code'],
             "company_name": inserted_company['company_name'],
             "total_capital": inserted_company['total_capital'],
-            "created_at": inserted_company["created_at"].strftime(settings.DT_FORMAT) if inserted_company.get("created_at") else None,
-            "updated_at": inserted_company["updated_at"].strftime(settings.DT_FORMAT) if inserted_company.get("updated_at") else None
+            "created_at": self.extract_datetime(inserted_company["created_at"]),
+            "updated_at": self.extract_datetime(inserted_company["updated_at"])
         })

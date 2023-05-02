@@ -1,9 +1,9 @@
 from handlers import RequestHandler
 from models.shareholder import get_companies_by_shareholder_code_and_type
 from enums import SHAREHOLDER_TYPES
-import settings
 
-class PersonShareholdersHandler(RequestHandler):
+
+class PersonSharesHandler(RequestHandler):
     PATH = "/api/persons/{personal_code}/shareholders"
 
     async def get(self, personal_code: int):
@@ -32,8 +32,8 @@ class PersonShareholdersHandler(RequestHandler):
                 "company_name": raw_shareholder["company_name"],
                 "capital": raw_shareholder["capital"],
                 "founder": raw_shareholder["founder"],
-                "created_at": raw_shareholder["created_at"].strftime(settings.DT_FORMAT) if raw_shareholder.get("created_at") else None,
-                "updated_at": raw_shareholder["updated_at"].strftime(settings.DT_FORMAT) if raw_shareholder.get("updated_at") else None
+                "created_at": self.extract_datetime(raw_shareholder["created_at"]),
+                "updated_at": self.extract_datetime(raw_shareholder["updated_at"])
             })
 
         return self.write_response(shareholder_list)
