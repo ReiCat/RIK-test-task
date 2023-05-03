@@ -19,6 +19,7 @@ interface EditCompanyFormProps {
 const EditCompanyForm: React.FC<EditCompanyFormProps> = (
   props: EditCompanyFormProps
 ): JSX.Element => {
+  const [error, setError] = useState<string>("");
   const [company, setCompany] = useState<CompanyClass>(props.company);
   const [companyUpdated, setCompanyUpdated] = useState<boolean>(false);
 
@@ -36,9 +37,18 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
       created_at: company?.created_at ? company?.created_at : "",
     },
     validationSchema: Yup.object({
-      company_name: Yup.string(),
-      registration_code: Yup.number(),
-      total_capital: Yup.number(),
+      company_name: Yup.string()
+        .required()
+        .min(3, "Must be at least 3 symbols")
+        .max(100, "Must be at most 100 symbols"),
+      registration_code: Yup.string()
+        .required()
+        .matches(/^[0-9]+$/, "Must be only digits")
+        .min(7, "Must be exactly 7 digits")
+        .max(7, "Must be exactly 7 digits"),
+      total_capital: Yup.number()
+        .required()
+        .min(2500, "The amount must be at least 2500"),
       created_at: Yup.date(),
     }),
     onSubmit: async (values) => {
@@ -52,7 +62,9 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
         .then((updatedCompany) => {
           setCompanyUpdated(true);
         })
-        .catch((err) => {});
+        .catch((err) => {
+          setError(err.response.data.message);
+        });
     },
   });
 
@@ -122,6 +134,12 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
       {companyUpdated ? (
         <Alert variant="success" className="mt-3">
           <b>Company has been updated!</b>
+        </Alert>
+      ) : null}
+
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
         </Alert>
       ) : null}
     </Form>

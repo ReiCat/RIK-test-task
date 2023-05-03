@@ -9,7 +9,7 @@ from handlers.company_search_handler import CompanySearchHandler
 from handlers.persons_handler import PersonsHandler
 from handlers.person_handler import PersonHandler
 from handlers.company_shareholders_handler import CompanyShareholdersHandler
-from handlers.person_shareholders_handler import PersonSharesHandler
+from handlers.person_shares_handler import PersonSharesHandler
 from handlers.shareholder_handler import ShareholderHandler
 
 routes = [

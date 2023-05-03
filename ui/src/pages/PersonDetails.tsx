@@ -30,8 +30,8 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
       .then((personEntry) => {
         setPerson(personEntry);
       })
-      .catch((error) => {
-        return;
+      .catch((err) => {
+        setError(err.response.data.message);
       });
   }, []);
 

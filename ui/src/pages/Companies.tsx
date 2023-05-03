@@ -18,6 +18,8 @@ const Companies: React.FC<CompaniesProps> = (
   const [error, setError] = useState<string>("");
   const [show, setShow] = useState(false);
   const [companies, setCompanies] = useState<CompanyClass[]>([]);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetchCompanies()
@@ -29,12 +31,10 @@ const Companies: React.FC<CompaniesProps> = (
       });
   }, []);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   return (
     <>
       <NavBar active={LINK_PATHS.companies} />
+
       <div className="d-flex justify-content-end mt-3">
         <Button variant="primary" onClick={handleShow}>
           Add company

@@ -75,6 +75,14 @@ class CompanyShareholdersHandler(RequestHandler):
         if isinstance(shareholder_code, str) and shareholder_code.isnumeric():
             shareholder_code = int(shareholder_code)
 
+        if shareholder_code == registration_code:
+            self.set_status(400)
+            return self.write_error(
+                status_code=400,
+                path=self.PATH.format(registration_code=registration_code),
+                message="The company cannot be a shareholder of itself"
+            )
+
         shareholder_type = request_payload.get('shareholder_type')
         if isinstance(shareholder_type, str) and shareholder_type.isnumeric():
             shareholder_type = int(shareholder_type)

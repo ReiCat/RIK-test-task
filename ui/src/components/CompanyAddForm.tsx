@@ -12,21 +12,7 @@ import { addCompany } from "../services/apiSource";
 import CompanyAddClass from "./data/CompanyAddClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 import { LINK_PATHS } from "../constants/paths";
-
-type Option = {
-  [value: string]: any;
-};
-
-const founderTypeOptions: Option[] = [
-  {
-    value: 1,
-    name: "Individual",
-  },
-  {
-    value: 2,
-    name: "Legal",
-  },
-];
+import { ShareholderTypeOptions } from "./data/ShareholderAddClass";
 
 interface CompanyAddFormProps {}
 
@@ -131,7 +117,7 @@ const CompanyAddForm: FunctionComponent<CompanyAddFormProps> = (
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="founder_type">
           <Form.Label>Founder type</Form.Label>
-          {founderTypeOptions.map((option, index) => {
+          {ShareholderTypeOptions.map((option, index) => {
             return (
               <Form.Check
                 key={index}

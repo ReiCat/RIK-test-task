@@ -1,97 +1,91 @@
-import React, { FC, useState, useEffect, ChangeEvent } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  useEffect,
+  ChangeEvent,
+} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import Alert from "react-bootstrap/Alert";
+import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
-import CompanyClass from "./data/CompanyClass";
+import { addCompanyShareholder } from "../services/apiSource";
+import ShareholderAddClass from "./data/ShareholderAddClass";
+import { SHAREHOLDER_TYPES } from "../constants/enums";
+import { LINK_PATHS } from "../constants/paths";
+import { ShareholderTypeOptions } from "./data/ShareholderAddClass";
 
 interface ShareholderAddFormProps {
-  company?: CompanyClass;
+  registration_code: string;
+  handleClose: Function;
 }
 
-const ShareholderAddForm: React.FC<ShareholderAddFormProps> = (
+const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
   props: ShareholderAddFormProps
 ): JSX.Element => {
-  const [company, setCompany] = useState<CompanyClass | undefined>(
-    props.company
+  const [registrationCode, setRegistrationCode] = useState<string>(
+    props.registration_code
   );
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
-  const companyForm = useFormik({
+  useEffect(() => {
+    setRegistrationCode(props.registration_code);
+  }, [props.registration_code]);
+
+  const companyAddForm = useFormik({
     initialValues: {
-      // company_name: company?.company_name ? company?.company_name : "",
-      // registration_code: company?.registration_code
-      //   ? company?.registration_code
-      //   : 0,
-      // shareholder_name: company?.shareholder_name
-      //   ? company.shareholder_name
-      //   : "",
-      // shareholder_code: company?.shareholder_code
-      //   ? company?.shareholder_code
-      //   : 0,
+      registration_code: registrationCode ? registrationCode : "",
+      shareholder_code: "",
+      shareholder_type: SHAREHOLDER_TYPES.INDIVIDUAL,
+      capital: "",
+      founder: false,
     },
     validationSchema: Yup.object({
-      // company_name: Yup.string(),
-      // registration_code: Yup.number(),
-      // shareholder_name: Yup.string(),
-      // shareholder_code: Yup.number(),
+      shareholder_code: Yup.string()
+        .required()
+        .matches(/^[0-9]+$/, "Must be only digits"),
+      capital: Yup.number().required().min(1, "Must be at least 1 euro"),
+      founder: Yup.boolean(),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      // const newOutputStreamSettings: OutputStreamSettingsClass =
-      //   props.outputStreamSettings!.clone();
-      // newOutputStreamSettings.IP = values.IP;
-      // newOutputStreamSettings.PORT = values.PORT;
-      // newOutputStreamSettings.enabledDisabled =
-      //   values.enabledDisabled === "yes" ? "ON" : "OFF";
-      // newOutputStreamSettings._xsrf = getCookie("_xsrf");
-      // editOutputStreamSettings(newOutputStreamSettings).then(() => {
-      //   setMessage("Settings has been updated");
-      // });
+      const newShareholder: ShareholderAddClass = new ShareholderAddClass();
+      newShareholder.registration_code = values.registration_code;
+      newShareholder.shareholder_code = values.shareholder_code;
+      newShareholder.shareholder_type = values.shareholder_type;
+      newShareholder.capital = values.capital;
+      newShareholder.founder = values.founder;
+      addCompanyShareholder(newShareholder)
+        .then((addedShareholder: any) => {
+          props.handleClose();
+          window.location.reload();
+        })
+        .catch((err) => {
+          setError(err.response.data.message);
+        });
     },
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    companyForm.handleChange(e);
+    companyAddForm.handleChange(e);
   };
 
   return (
-    <Form noValidate onSubmit={companyForm.handleSubmit}>
+    <Form onSubmit={companyAddForm.handleSubmit}>
       <Row className="mb-3">
-        <Form.Group as={Col} md="6" controlId="company_name">
-          <Form.Label>Company name</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            placeholder="Company name"
-            onChange={handleChange}
-          />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-        </Form.Group>
         <Form.Group as={Col} md="6" controlId="registration_code">
           <Form.Label>Registration code</Form.Label>
           <Form.Control
-            required
+            disabled
             type="text"
             placeholder="Registration code"
             onChange={handleChange}
+            value={companyAddForm.values.registration_code}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-        </Form.Group>
-      </Row>
-      <Row className="mb-3">
-        <Form.Group as={Col} md="6" controlId="shareholder_name">
-          <Form.Label>Shareholder name</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            placeholder="Shareholder name"
-            onChange={handleChange}
-          />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="shareholder_code">
           <Form.Label>Shareholder code</Form.Label>
@@ -100,21 +94,58 @@ const ShareholderAddForm: React.FC<ShareholderAddFormProps> = (
             type="text"
             placeholder="Shareholder code"
             onChange={handleChange}
+            value={companyAddForm.values.shareholder_code}
+            isInvalid={!!companyAddForm.errors?.shareholder_code}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
-      {/* <Form.Group className="mb-3">
-        <Form.Check
-          required
-          label="Agree to terms and conditions"
-          feedback="You must agree before submitting."
-          feedbackType="invalid"
-        />
-      </Form.Group> */}
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="shareholder_type">
+          <Form.Label>Shareholder type</Form.Label>
+          {ShareholderTypeOptions.map((option, index) => {
+            return (
+              <Form.Check
+                key={index}
+                name="shareholder_type"
+                value={option.value}
+                type="radio"
+                defaultChecked={
+                  option.value === companyAddForm.values.shareholder_type
+                }
+                label={option.name}
+                onChange={handleChange}
+              />
+            );
+          })}
+        </Form.Group>
+      </Row>
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="capital">
+          <Form.Label>Capital</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Capital"
+            onChange={handleChange}
+            value={companyAddForm.values.capital}
+            isInvalid={!!companyAddForm.errors?.capital}
+          />
+        </Form.Group>
+      </Row>
+      <Row className="mb-3">
+        <Form.Group className="mb-3" controlId="founder">
+          <Form.Check type="checkbox" label="Founder" onChange={handleChange} />
+        </Form.Group>
+      </Row>
+
       <Button type="submit" variant="primary" size="lg">
-        Search
+        Add
       </Button>
+      {error !== "" ? (
+        <Alert className="mt-3">
+          <b>{error}</b>
+        </Alert>
+      ) : null}
     </Form>
   );
 };
