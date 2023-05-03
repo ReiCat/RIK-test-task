@@ -26,8 +26,8 @@ class PersonsHandler(RequestHandler):
                 "personal_code": raw_person["personal_code"],
                 "first_name": raw_person["first_name"],
                 "last_name": raw_person["last_name"],
-                "created_at": self.extract_datetime(raw_person["created_at"]),
-                "updated_at": self.extract_datetime(raw_person["updated_at"])
+                "created_at": self.extract_datetime(raw_person.get("created_at")),
+                "updated_at": self.extract_datetime(raw_person.get("updated_at"))
             })
 
         return self.write_response(persons)
@@ -89,6 +89,6 @@ class PersonsHandler(RequestHandler):
             "personal_code": inserted_person['personal_code'],
             "first_name": inserted_person['first_name'],
             "last_name": inserted_person['last_name'],
-            "created_at": self.extract_datetime(inserted_person["created_at"]),
-            "updated_at": self.extract_datetime(inserted_person["updated_at"])
+            "created_at": self.extract_datetime(inserted_person.get("created_at")),
+            "updated_at": self.extract_datetime(inserted_person.get("updated_at"))
         })

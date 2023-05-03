@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
+import { LinkContainer } from "react-router-bootstrap";
 
 import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
@@ -56,11 +57,11 @@ const Companies: React.FC<CompaniesProps> = (
                   <td>{company.registration_code}</td>
                   <td>{company.company_name}</td>
                   <td>
-                    <Button
-                      href={`${LINK_PATHS.companies}/${company.registration_code}`}
+                    <LinkContainer
+                      to={`${LINK_PATHS.companies}/${company.registration_code}`}
                     >
-                      Details
-                    </Button>
+                      <Button>Details</Button>
+                    </LinkContainer>
                   </td>
                 </tr>
               );

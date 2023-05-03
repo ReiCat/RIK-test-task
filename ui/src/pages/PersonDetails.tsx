@@ -16,9 +16,7 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
 ): JSX.Element => {
   const [error, setError] = useState<string>("");
   const [person, setPerson] = useState<PersonClass | undefined>();
-  const [personShareholders, setPersonShareholders] = useState<
-    ShareholderClass[]
-  >([]);
+  const [personShares, setPersonShares] = useState<ShareholderClass[]>([]);
   let { personalCode } = useParams();
 
   useEffect(() => {
@@ -38,8 +36,8 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
   useEffect(() => {
     if (person !== undefined) {
       fetchPersonShareholders(person.personal_code)
-        .then((shareholders: any) => {
-          setPersonShareholders(shareholders);
+        .then((shares: any) => {
+          setPersonShares(shares);
         })
         .catch((err) => {
           setError(err.response.data.message);
@@ -78,7 +76,7 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
 
       <h3>Shares</h3>
 
-      {Array.isArray(personShareholders) && personShareholders.length > 0 ? (
+      {Array.isArray(personShares) && personShares.length > 0 ? (
         <Table className="mt-3" striped bordered hover>
           <thead>
             <tr>
@@ -91,15 +89,15 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
             </tr>
           </thead>
           <tbody>
-            {personShareholders.map((personShareholder, index) => {
+            {personShares.map((personShares, index) => {
               return (
                 <tr key={index}>
-                  <td>{personShareholder.company_registration_code}</td>
-                  <td>{personShareholder.company_name}</td>
-                  <td>{personShareholder.capital}</td>
-                  <td>{personShareholder.founder ? "✓" : ""}</td>
-                  <td>{personShareholder.created_at}</td>
-                  <td>{personShareholder.updated_at}</td>
+                  <td>{personShares.company_registration_code}</td>
+                  <td>{personShares.company_name}</td>
+                  <td>{personShares.capital}</td>
+                  <td>{personShares.founder ? "✓" : ""}</td>
+                  <td>{personShares.created_at}</td>
+                  <td>{personShares.updated_at}</td>
                 </tr>
               );
             })}
@@ -107,7 +105,7 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
         </Table>
       ) : (
         <Alert className="mt-3">
-          <b>No shareholders found</b>
+          <b>No shares found</b>
         </Alert>
       )}
 

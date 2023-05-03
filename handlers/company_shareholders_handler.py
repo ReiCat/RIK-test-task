@@ -40,8 +40,8 @@ class CompanyShareholdersHandler(RequestHandler):
                 "shareholder_code": raw_shareholder["shareholder_code"],
                 "shareholder_capital": raw_shareholder["shareholder_capital"],
                 "founder": raw_shareholder["founder"],
-                "created_at": self.extract_datetime(raw_shareholder["created_at"]),
-                "updated_at": self.extract_datetime(raw_shareholder["updated_at"])
+                "created_at": self.extract_datetime(raw_shareholder.get("created_at")),
+                "updated_at": self.extract_datetime(raw_shareholder.get("updated_at"))
             })
 
         return self.write_response(shareholder_list)
@@ -182,6 +182,6 @@ class CompanyShareholdersHandler(RequestHandler):
             "shareholder_type": inserted_shareholder["shareholder_type"],
             "founder": inserted_shareholder["founder"],
             "capital": inserted_shareholder["capital"],
-            "created_at": self.extract_datetime(inserted_shareholder["created_at"]),
-            "updated_at": self.extract_datetime(inserted_shareholder["updated_at"])
+            "created_at": self.extract_datetime(inserted_shareholder.get("created_at")),
+            "updated_at": self.extract_datetime(inserted_shareholder.get("updated_at"))
         })

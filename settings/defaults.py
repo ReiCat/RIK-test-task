@@ -30,7 +30,7 @@ LOG_BACKUP_COUNT = (
 """ DATABASE """
 DB_HOST = '127.0.0.1'
 DB_PORT = 5432
-DB_NAME = 'rtls'
-DB_USER = 'postgres'
-DB_PASSWORD = 'user_password'
+DB_NAME = 'test_rik'
+DB_USER = 'test_rik'
+DB_PASSWORD = 'test_rik'
 DB_ECHO_REQUESTS = False

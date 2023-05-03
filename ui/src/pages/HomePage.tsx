@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
+import { LinkContainer } from "react-router-bootstrap";
 
 import NavBar from "../components/NavBar";
 import CompanySearchForm from "../components/CompanySearchForm";
@@ -36,11 +37,11 @@ const HomePage: React.FC<HomePageProps> = (
                   <td>{company.registration_code}</td>
                   <td>{company.company_name}</td>
                   <td>
-                    <Button
-                      href={`${LINK_PATHS.companies}/${company.registration_code}`}
+                    <LinkContainer
+                      to={`${LINK_PATHS.companies}/${company.registration_code}`}
                     >
-                      Details
-                    </Button>
+                      <Button>Details</Button>
+                    </LinkContainer>
                   </td>
                 </tr>
               );

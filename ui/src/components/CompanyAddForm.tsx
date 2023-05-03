@@ -113,7 +113,6 @@ const CompanyAddForm: FunctionComponent<CompanyAddFormProps> = (
             value={companyAddForm.values.founder_code}
             isInvalid={!!companyAddForm.errors?.founder_code}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="founder_type">
           <Form.Label>Founder type</Form.Label>

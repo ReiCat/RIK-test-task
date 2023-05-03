@@ -84,7 +84,6 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
             onChange={handleChange}
             value={companyForm.values.company_name}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="registration_code">
           <Form.Label>Registration code</Form.Label>
@@ -95,7 +94,6 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
             onChange={handleChange}
             value={companyForm.values.registration_code}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
       <Row className="mb-3">
@@ -107,7 +105,6 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
             onChange={handleChange}
             value={companyForm.values.total_capital}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="created_at">
           <Form.Label>Created at</Form.Label>
@@ -117,17 +114,8 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
             onChange={handleChange}
             value={companyForm.values.created_at}
           />
-          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
       </Row>
-      {/* <Form.Group className="mb-3">
-        <Form.Check
-          required
-          label="Agree to terms and conditions"
-          feedback="You must agree before submitting."
-          feedbackType="invalid"
-        />
-      </Form.Group> */}
       <Button type="submit" variant="primary" size="lg">
         Edit
       </Button>

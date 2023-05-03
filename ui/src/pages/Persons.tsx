@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
+import { LinkContainer } from "react-router-bootstrap";
 
 import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
@@ -61,11 +62,11 @@ const Persons: React.FC<PersonsProps> = (props: PersonsProps): JSX.Element => {
                   <td>{person.created_at}</td>
                   <td>{person.updated_at}</td>
                   <td>
-                    <Button
-                      href={`${LINK_PATHS.persons}/${person.personal_code}`}
+                    <LinkContainer
+                      to={`${LINK_PATHS.persons}/${person.personal_code}`}
                     >
-                      Details
-                    </Button>
+                      <Button>Details</Button>
+                    </LinkContainer>
                   </td>
                 </tr>
               );

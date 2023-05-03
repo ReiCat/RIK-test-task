@@ -32,8 +32,8 @@ class PersonSharesHandler(RequestHandler):
                 "company_name": raw_shareholder["company_name"],
                 "capital": raw_shareholder["capital"],
                 "founder": raw_shareholder["founder"],
-                "created_at": self.extract_datetime(raw_shareholder["created_at"]),
-                "updated_at": self.extract_datetime(raw_shareholder["updated_at"])
+                "created_at": self.extract_datetime(raw_shareholder.get("created_at")),
+                "updated_at": self.extract_datetime(raw_shareholder.get("updated_at"))
             })
 
         return self.write_response(shareholder_list)

@@ -87,8 +87,8 @@ class ShareholderHandler(RequestHandler):
             "shareholder_code": updated_shareholder['shareholder_code'],
             "capital": updated_shareholder['capital'],
             "founder": updated_shareholder['founder'],
-            "created_at": self.extract_datetime(updated_shareholder["created_at"]),
-            "updated_at": self.extract_datetime(updated_shareholder["updated_at"])
+            "created_at": self.extract_datetime(updated_shareholder.get("created_at")),
+            "updated_at": self.extract_datetime(updated_shareholder.get("updated_at"))
         })
         
 

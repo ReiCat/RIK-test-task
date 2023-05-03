@@ -35,7 +35,9 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
     <>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/">Companies viewer</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">
+            Companies viewer
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">{renderMenu(menuData)}</Nav>

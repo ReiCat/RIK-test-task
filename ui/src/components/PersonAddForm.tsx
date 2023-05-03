@@ -91,7 +91,7 @@ const PersonAddForm: FunctionComponent<PersonAddFormProps> = (
           <Form.Control
             required
             type="text"
-            placeholder="Shareholder name"
+            placeholder="Personal code"
             onChange={handleChange}
             isInvalid={!!personAddForm.errors?.personal_code}
           />
