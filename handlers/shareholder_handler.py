@@ -22,7 +22,10 @@ class ShareholderHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH.format(registration_code=registration_code, shareholder_code=shareholder_code),
+                path=self.PATH.format(
+                    registration_code=registration_code, 
+                    shareholder_code=shareholder_code
+                ),
                 message="Missing required arguments"
             )
         
@@ -49,7 +52,10 @@ class ShareholderHandler(RequestHandler):
             self.set_status(400)
             return self.write_error(
                 status_code=400,
-                path=self.PATH.format(registration_code=registration_code, shareholder_code=shareholder_code),
+                path=self.PATH.format(
+                    registration_code=registration_code, 
+                    shareholder_code=shareholder_code
+                ),
                 message="Missing required arguments"
             )
 
@@ -70,7 +76,10 @@ class ShareholderHandler(RequestHandler):
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,
-                path=self.PATH.format(registration_code=registration_code, shareholder_code=shareholder_code),
+                path=self.PATH.format(
+                    registration_code=registration_code, 
+                    shareholder_code=shareholder_code
+                ),
                 message=message
             )
         
@@ -78,7 +87,10 @@ class ShareholderHandler(RequestHandler):
             self.set_status(404)
             return self.write_error(
                 status_code=404,
-                path=self.PATH.format(registration_code=registration_code, shareholder_code=shareholder_code),
+                path=self.PATH.format(
+                    registration_code=registration_code, 
+                    shareholder_code=shareholder_code
+                ),
                 message="No shareholder found"
             )
 
@@ -112,6 +124,9 @@ class ShareholderHandler(RequestHandler):
             self.set_status(500)
             return self.write_error(
                 status_code=500,
-                path=self.PATH.format(registration_code=registration_code, shareholder_code=shareholder_code),
+                path=self.PATH.format(
+                    registration_code=registration_code, 
+                    shareholder_code=shareholder_code
+                ),
                 message="Internal server error"
             )
