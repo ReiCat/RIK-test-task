@@ -77,6 +77,7 @@ class CompaniesHandler(RequestHandler):
                     message="Internal server error"
                 )
         else:
+            # It is assumed that companies can be shareholders too as Legal shareholder type
             try:
                 shareholder = await get_company_by_registration_code(
                     founder_code

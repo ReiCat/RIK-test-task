@@ -55,8 +55,8 @@ export async function fetchPerson(personal_code: number): Promise<PersonClass> {
   return await Api.get<PersonClass>(`${ApiPaths.PATH_PERSONS}/${personal_code}`);
 };
 
-export async function fetchPersonShareholders(personal_code: number): Promise<CompanyShareholderClass[]> {
-  return await Api.get(`${ApiPaths.PATH_PERSONS}/${personal_code}/shareholders`, ShareholderClass);
+export async function fetchPersonShares(personal_code: number): Promise<CompanyShareholderClass[]> {
+  return await Api.get(`${ApiPaths.PATH_PERSONS}/${personal_code}/shares`, ShareholderClass);
 };
 
 export async function updatePerson(person: PersonClass): Promise<PersonClass> {

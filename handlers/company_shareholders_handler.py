@@ -168,6 +168,14 @@ class CompanyShareholdersHandler(RequestHandler):
                 status_code = 400
                 message = "Shareholder with such params already exists"
 
+            if (
+                hasattr(e, "message")
+                and isinstance(e.message, str)
+                and "total_capital_amount_too_small" in e.message
+            ):
+                status_code = 400
+                message = "Minimal total amount requirement is 2500 eur"
+
             self.set_status(status_code)
             return self.write_error(
                 status_code=status_code,

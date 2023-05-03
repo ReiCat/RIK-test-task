@@ -49,6 +49,12 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
     }
   }, [company]);
 
+  const addToCompanyShareholders = (
+    newCompanyShareholders: CompanyShareholderClass[]
+  ) => {
+    return setCompanyShareholders(newCompanyShareholders);
+  };
+
   return (
     <>
       <NavBar active={LINK_PATHS.companyDetails} />
@@ -126,6 +132,7 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
           <ShareholderAddForm
             registration_code={registrationCode!}
             handleClose={handleClose}
+            addToCompanyShareholders={addToCompanyShareholders}
           />
         </Modal.Body>
         <Modal.Footer>

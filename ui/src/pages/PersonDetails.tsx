@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 
 import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
-import { fetchPerson, fetchPersonShareholders } from "../services/apiSource";
+import { fetchPerson, fetchPersonShares } from "../services/apiSource";
 import PersonClass from "../components/data/PersonClass";
 import ShareholderClass from "../components/data/ShareholderClass";
 
@@ -35,7 +35,7 @@ const PersonDetails: React.FC<PersonDetailsProps> = (
 
   useEffect(() => {
     if (person !== undefined) {
-      fetchPersonShareholders(person.personal_code)
+      fetchPersonShares(person.personal_code)
         .then((shares: any) => {
           setPersonShares(shares);
         })

@@ -13,8 +13,12 @@ import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { addCompanyShareholder } from "../services/apiSource";
+import {
+  addCompanyShareholder,
+  fetchCompanyShareholders,
+} from "../services/apiSource";
 import ShareholderAddClass from "./data/ShareholderAddClass";
+import CompanyShareholderClass from "./data/CompanyShareholderClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 import { LINK_PATHS } from "../constants/paths";
 import { ShareholderTypeOptions } from "./data/ShareholderAddClass";
@@ -22,6 +26,7 @@ import { ShareholderTypeOptions } from "./data/ShareholderAddClass";
 interface ShareholderAddFormProps {
   registration_code: string;
   handleClose: Function;
+  addToCompanyShareholders: Function;
 }
 
 const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
@@ -60,9 +65,16 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
       newShareholder.capital = values.capital;
       newShareholder.founder = values.founder;
       addCompanyShareholder(newShareholder)
-        .then((addedShareholder: any) => {
+        .then((addedShareholder) => {
+          fetchCompanyShareholders(+newShareholder.registration_code)
+            .then((shareholders) => {
+              props.addToCompanyShareholders(shareholders);
+            })
+            .catch((err) => {
+              setError(err.response.data.message);
+            });
+
           props.handleClose();
-          window.location.reload();
         })
         .catch((err) => {
           setError(err.response.data.message);
