@@ -11,13 +11,13 @@ import { updateCompany } from "../services/apiSource";
 
 import CompanyClass from "./data/CompanyClass";
 
-interface EditCompanyFormProps {
+interface CompanyCompanyFormProps {
   registration_code: number;
   company: CompanyClass;
 }
 
-const EditCompanyForm: React.FC<EditCompanyFormProps> = (
-  props: EditCompanyFormProps
+const CompanyCompanyForm: React.FC<CompanyCompanyFormProps> = (
+  props: CompanyCompanyFormProps
 ): JSX.Element => {
   const [error, setError] = useState<string>("");
   const [company, setCompany] = useState<CompanyClass>(props.company);
@@ -134,4 +134,4 @@ const EditCompanyForm: React.FC<EditCompanyFormProps> = (
   );
 };
 
-export default EditCompanyForm;
+export default CompanyCompanyForm;

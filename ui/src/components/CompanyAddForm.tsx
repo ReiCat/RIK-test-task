@@ -157,6 +157,11 @@ const CompanyAddForm: FunctionComponent<CompanyAddFormProps> = (
           />
         </Form.Group>
       </Row>
+      <Row className="mb-3">
+        <Form.Group className="mb-3" controlId="founder">
+          <Form.Check disabled checked type="checkbox" label="Founder" />
+        </Form.Group>
+      </Row>
       <Button type="submit" variant="primary" size="lg">
         Add
       </Button>

@@ -8,6 +8,7 @@ import ShareholderClass from "../components/data/ShareholderClass";
 import AddCompanyClass from "../components/data/CompanyAddClass";
 import * as ApiPaths from "../constants/apiPaths";
 import ShareholderAddClass from "../components/data/ShareholderAddClass";
+import ShareholderEditClass from "../components/data/ShareholderEditClass";
 
 export async function fetchCompanies(): Promise<CompanyClass[]> {
   return await Api.get(ApiPaths.PATH_COMPANIES, CompanyClass);
@@ -75,8 +76,8 @@ export async function fetchCompanyShareholders(registration_code: number): Promi
   return await Api.get(`${ApiPaths.PATH_COMPANIES}/${registration_code}/shareholders`, CompanyShareholderClass);
 };
 
-export async function updateCompanyShareholder(shareholder: CompanyShareholderClass): Promise<PersonClass> {
-  return await Api.put<PersonClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.registration_code}/shareholders/${shareholder.shareholder_code}`, shareholder);
+export async function updateCompanyShareholder(shareholder: ShareholderEditClass): Promise<ShareholderEditClass> {
+  return await Api.put<ShareholderEditClass>(`${ApiPaths.PATH_COMPANIES}/${shareholder.registration_code}/shareholders/${shareholder.shareholder_code}`, shareholder);
 };
 
 export async function deleteCompanyShareholder(company_registration_code: number, shareholder_code: number): Promise<number> {

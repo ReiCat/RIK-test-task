@@ -4,6 +4,7 @@ import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { LinkContainer } from "react-router-bootstrap";
 
 import NavBar from "../components/NavBar";
 import { LINK_PATHS } from "../constants/paths";
@@ -11,6 +12,7 @@ import { fetchCompany, fetchCompanyShareholders } from "../services/apiSource";
 import CompanyClass from "../components/data/CompanyClass";
 import CompanyShareholderClass from "../components/data/CompanyShareholderClass";
 import ShareholderAddForm from "../components/ShareholderAddForm";
+import ShareholderEditForm from "../components/ShareholderEditForm";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 
 interface CompanyDetailsProps {}
@@ -18,15 +20,33 @@ interface CompanyDetailsProps {}
 const CompanyDetails: React.FC<CompanyDetailsProps> = (
   props: CompanyDetailsProps
 ): JSX.Element => {
+  let { registrationCode } = useParams();
   const [error, setError] = useState<string>("");
-  const [show, setShow] = useState(false);
+
+  const [showAddShareholder, setShowAddShareholder] = useState(false);
+  const [showEditShareholder, setShowEditShareholder] = useState(false);
+
+  const [shareholderToEdit, setShareholderToEdit] =
+    useState<CompanyShareholderClass>();
+
+  const handleClose = () => setShowAddShareholder(false);
+  const handleShow = () => setShowAddShareholder(true);
+
   const [company, setCompany] = useState<CompanyClass | undefined>();
+
   const [companyShareholders, setCompanyShareholders] = useState<
     CompanyShareholderClass[]
   >([]);
-  let { registrationCode } = useParams();
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
+  const handleCloseEditShareholderForm = () => setShowEditShareholder(false);
+  const handleShowEditShareholderForm = () => setShowEditShareholder(true);
+
+  const handleEditShareholder = (
+    companyShareholderClass: CompanyShareholderClass
+  ) => {
+    setShareholderToEdit(companyShareholderClass);
+    handleShowEditShareholderForm();
+  };
 
   useEffect(() => {
     fetchCompany(Number(registrationCode))
@@ -103,6 +123,7 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
               <th>Founder</th>
               <th>Created at</th>
               <th>Updated at</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -125,6 +146,16 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
                   <td>{companyShareholder.founder ? "✓" : ""}</td>
                   <td>{companyShareholder.created_at}</td>
                   <td>{companyShareholder.updated_at}</td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        handleEditShareholder(companyShareholder);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </td>
                 </tr>
               );
             })}
@@ -136,7 +167,7 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
         </Alert>
       )}
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={showAddShareholder} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add shareholder</Modal.Title>
         </Modal.Header>
@@ -149,6 +180,24 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showEditShareholder} onHide={handleCloseEditShareholderForm}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit shareholder</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ShareholderEditForm
+            shareholderToEdit={shareholderToEdit!}
+            handleClose={handleCloseEditShareholderForm}
+            addToCompanyShareholders={addToCompanyShareholders}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseEditShareholderForm}>
             Close
           </Button>
         </Modal.Footer>

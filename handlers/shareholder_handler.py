@@ -83,8 +83,9 @@ class ShareholderHandler(RequestHandler):
             )
 
         return self.write_response({
-            "company_registration_code": updated_shareholder['company_registration_code'],
+            "registration_code": updated_shareholder['company_registration_code'],
             "shareholder_code": updated_shareholder['shareholder_code'],
+            "shareholder_type": updated_shareholder['shareholder_type'],
             "capital": updated_shareholder['capital'],
             "founder": updated_shareholder['founder'],
             "created_at": self.extract_datetime(updated_shareholder.get("created_at")),

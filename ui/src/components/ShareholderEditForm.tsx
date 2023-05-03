@@ -14,65 +14,78 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
-  addCompanyShareholder,
+  updateCompanyShareholder,
   fetchCompanyShareholders,
 } from "../services/apiSource";
-import ShareholderAddClass, {
-  ShareholderTypeOptions,
-} from "./data/ShareholderAddClass";
 import CompanyShareholderClass from "./data/CompanyShareholderClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
 import { LINK_PATHS } from "../constants/paths";
+import ShareholderEditClass, {
+  ShareholderTypeOptions,
+} from "./data/ShareholderEditClass";
 
-interface ShareholderAddFormProps {
-  registration_code: string;
+interface ShareholderEditFormProps {
+  shareholderToEdit: CompanyShareholderClass;
   handleClose: Function;
   addToCompanyShareholders: Function;
 }
 
-const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
-  props: ShareholderAddFormProps
+const ShareholderEditForm: FunctionComponent<ShareholderEditFormProps> = (
+  props: ShareholderEditFormProps
 ): JSX.Element => {
-  const [registrationCode, setRegistrationCode] = useState<string>(
-    props.registration_code
-  );
+  const [shareholderToEdit, setShareholderToEdit] =
+    useState<CompanyShareholderClass>(props.shareholderToEdit);
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    setRegistrationCode(props.registration_code);
-  }, [props.registration_code]);
+    setShareholderToEdit(props.shareholderToEdit);
+  }, [props.shareholderToEdit]);
 
-  const companyAddForm = useFormik({
+  const companyEditForm = useFormik({
     initialValues: {
-      registration_code: registrationCode ? registrationCode : "",
-      shareholder_code: "",
-      shareholder_type: SHAREHOLDER_TYPES.INDIVIDUAL,
-      capital: "",
+      registration_code: shareholderToEdit.registration_code
+        ? shareholderToEdit.registration_code
+        : 0,
+      shareholder_code: shareholderToEdit.shareholder_code
+        ? shareholderToEdit.shareholder_code
+        : 0,
+      shareholder_type: shareholderToEdit.shareholder_type
+        ? shareholderToEdit.shareholder_type
+        : SHAREHOLDER_TYPES.INDIVIDUAL,
+      capital: shareholderToEdit.shareholder_capital
+        ? shareholderToEdit.shareholder_capital
+        : 0,
+      founder: shareholderToEdit.founder ? shareholderToEdit.founder : false,
     },
     validationSchema: Yup.object({
+      registration_code: Yup.string()
+        .required()
+        .matches(/^[0-9]+$/, "Must be only digits")
+        .min(7, "Must be exactly 7 digits")
+        .max(7, "Must be exactly 7 digits"),
       shareholder_code: Yup.string()
         .required()
         .matches(/^[0-9]+$/, "Must be only digits"),
       capital: Yup.number().required().min(1, "Must be at least 1 euro"),
+      founder: Yup.boolean(),
     }),
     onSubmit: async (values) => {
-      const newShareholder: ShareholderAddClass = new ShareholderAddClass();
+      const newShareholder: ShareholderEditClass = new ShareholderEditClass();
       newShareholder.registration_code = values.registration_code;
       newShareholder.shareholder_code = values.shareholder_code;
       newShareholder.shareholder_type = values.shareholder_type;
       newShareholder.capital = values.capital;
-      newShareholder.founder = false;
-      addCompanyShareholder(newShareholder)
-        .then((addedShareholder) => {
-          fetchCompanyShareholders(+newShareholder.registration_code)
+      newShareholder.founder = values.founder;
+      updateCompanyShareholder(newShareholder)
+        .then((updatedShareholder) => {
+          fetchCompanyShareholders(+updatedShareholder.registration_code)
             .then((shareholders) => {
               props.addToCompanyShareholders(shareholders);
             })
             .catch((err) => {
               setError(err.response.data.message);
             });
-
           props.handleClose();
         })
         .catch((err) => {
@@ -82,11 +95,11 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    companyAddForm.handleChange(e);
+    companyEditForm.handleChange(e);
   };
 
   return (
-    <Form onSubmit={companyAddForm.handleSubmit}>
+    <Form onSubmit={companyEditForm.handleSubmit}>
       <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="registration_code">
           <Form.Label>Registration code</Form.Label>
@@ -95,7 +108,7 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
             type="text"
             placeholder="Registration code"
             onChange={handleChange}
-            value={companyAddForm.values.registration_code}
+            value={companyEditForm.values.registration_code}
           />
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="shareholder_code">
@@ -105,8 +118,8 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
             type="text"
             placeholder="Shareholder code"
             onChange={handleChange}
-            value={companyAddForm.values.shareholder_code}
-            isInvalid={!!companyAddForm.errors?.shareholder_code}
+            value={companyEditForm.values.shareholder_code}
+            isInvalid={!!companyEditForm.errors?.shareholder_code}
           />
         </Form.Group>
       </Row>
@@ -121,7 +134,7 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
                 value={option.value}
                 type="radio"
                 defaultChecked={
-                  option.value === companyAddForm.values.shareholder_type
+                  option.value === companyEditForm.values.shareholder_type
                 }
                 label={option.name}
                 onChange={handleChange}
@@ -136,19 +149,24 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
             type="text"
             placeholder="Capital"
             onChange={handleChange}
-            value={companyAddForm.values.capital}
-            isInvalid={!!companyAddForm.errors?.capital}
+            value={companyEditForm.values.capital}
+            isInvalid={!!companyEditForm.errors?.capital}
           />
         </Form.Group>
       </Row>
       <Row className="mb-3">
         <Form.Group className="mb-3" controlId="founder">
-          <Form.Check disabled type="checkbox" label="Founder" />
+          <Form.Check
+            type="checkbox"
+            checked={companyEditForm.values.founder}
+            label="Founder"
+            onChange={handleChange}
+          />
         </Form.Group>
       </Row>
 
       <Button type="submit" variant="primary" size="lg">
-        Add
+        Edit
       </Button>
       {error !== "" ? (
         <Alert className="mt-3">
@@ -159,4 +177,4 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
   );
 };
 
-export default ShareholderAddForm;
+export default ShareholderEditForm;
