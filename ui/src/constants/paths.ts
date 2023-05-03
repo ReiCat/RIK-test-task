@@ -5,6 +5,5 @@ export enum LINK_PATHS {
   companies = "/companies",
   companyDetails = "/companies/:registrationCode",
   companiesSearch = "/companies/search",
-  shareholders = "/companies/:registrationCode/shareholders",
   notFound = "/not-found",
 }

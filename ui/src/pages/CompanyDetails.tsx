@@ -13,7 +13,7 @@ import CompanyClass from "../components/data/CompanyClass";
 import CompanyShareholderClass from "../components/data/CompanyShareholderClass";
 import ShareholderAddForm from "../components/ShareholderAddForm";
 import ShareholderEditForm from "../components/ShareholderEditForm";
-import { SHAREHOLDER_TYPES } from "../constants/enums";
+import { SHAREHOLDER_TYPES } from "../constants/constants";
 
 interface CompanyDetailsProps {}
 

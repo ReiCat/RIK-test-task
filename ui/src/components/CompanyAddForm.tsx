@@ -10,9 +10,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { addCompany } from "../services/apiSource";
 import CompanyAddClass from "./data/CompanyAddClass";
-import { SHAREHOLDER_TYPES } from "../constants/enums";
+import {
+  SHAREHOLDER_TYPES,
+  ShareholderTypeOptions,
+} from "../constants/constants";
 import { LINK_PATHS } from "../constants/paths";
-import { ShareholderTypeOptions } from "./data/ShareholderAddClass";
 
 interface CompanyAddFormProps {}
 

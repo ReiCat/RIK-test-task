@@ -1,4 +1,4 @@
-import React, { ReactElement, PropsWithChildren } from "react";
+import React, { ReactElement } from "react";
 import { Route } from "react-router";
 
 import { ErrorBoundary } from "react-error-boundary";

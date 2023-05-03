@@ -17,10 +17,11 @@ import {
   fetchCompanyShareholders,
   fetchCompany,
 } from "../services/apiSource";
-import ShareholderAddClass, {
+import ShareholderAddClass from "./data/ShareholderAddClass";
+import {
+  SHAREHOLDER_TYPES,
   ShareholderTypeOptions,
-} from "./data/ShareholderAddClass";
-import { SHAREHOLDER_TYPES } from "../constants/enums";
+} from "../constants/constants";
 
 interface ShareholderAddFormProps {
   registration_code: string;

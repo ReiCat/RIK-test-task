@@ -18,10 +18,11 @@ import {
   fetchCompany,
 } from "../services/apiSource";
 import CompanyShareholderClass from "./data/CompanyShareholderClass";
-import { SHAREHOLDER_TYPES } from "../constants/enums";
-import ShareholderEditClass, {
+import {
+  SHAREHOLDER_TYPES,
   ShareholderTypeOptions,
-} from "./data/ShareholderEditClass";
+} from "../constants/constants";
+import ShareholderEditClass from "./data/ShareholderEditClass";
 
 interface ShareholderEditFormProps {
   shareholderToEdit: CompanyShareholderClass;

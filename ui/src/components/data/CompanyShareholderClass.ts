@@ -1,4 +1,4 @@
-import { SHAREHOLDER_TYPES } from "../../constants/enums"
+import { SHAREHOLDER_TYPES } from "../../constants/constants"
 
 export default class CompanyShareholderClass {
   id: number = 0;

@@ -1,4 +1,4 @@
-import { SHAREHOLDER_TYPES } from "../../constants/enums"
+import { SHAREHOLDER_TYPES } from "../../constants/constants"
 
 export default class ShareholderEditClass {
   registration_code: number = 0;
@@ -29,18 +29,3 @@ export default class ShareholderEditClass {
     this.updated_at = shareholderAddClass.updated_at;
   }
 }
-
-type Option = {
-  [value: string]: any;
-};
-
-export const ShareholderTypeOptions: Option[] = [
-  {
-    value: 1,
-    name: "Individual",
-  },
-  {
-    value: 2,
-    name: "Legal",
-  },
-];

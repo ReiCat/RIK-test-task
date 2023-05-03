@@ -2,7 +2,7 @@
 
 ## Steps to run locally
 
-To run this project the Python 3.10 and PostgreSQL 14.7 is required.
+To run this project the Python 3+ and PostgreSQL 14.7 is required.
 
 ### Create database & user with password
 

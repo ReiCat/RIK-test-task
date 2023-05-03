@@ -40,7 +40,6 @@ const PersonAddForm: FunctionComponent<PersonAddFormProps> = (
         .matches(/^[0-9]+$/, "Must be only digits"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
       const newPerson = new PersonAddClass();
       newPerson.first_name = values.first_name;
       newPerson.last_name = values.last_name;

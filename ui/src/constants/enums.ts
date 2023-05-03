@@ -1,4 +1,0 @@
-export enum SHAREHOLDER_TYPES {
-  INDIVIDUAL = 1,
-  LEGAL = 2,
-}
