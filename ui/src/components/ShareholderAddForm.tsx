@@ -130,8 +130,6 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
             );
           })}
         </Form.Group>
-      </Row>
-      <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="capital">
           <Form.Label>Capital</Form.Label>
           <Form.Control

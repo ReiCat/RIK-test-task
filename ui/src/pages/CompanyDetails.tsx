@@ -11,6 +11,7 @@ import { fetchCompany, fetchCompanyShareholders } from "../services/apiSource";
 import CompanyClass from "../components/data/CompanyClass";
 import CompanyShareholderClass from "../components/data/CompanyShareholderClass";
 import ShareholderAddForm from "../components/ShareholderAddForm";
+import { SHAREHOLDER_TYPES } from "../constants/enums";
 
 interface CompanyDetailsProps {}
 
@@ -95,16 +96,25 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
         <Table className="mt-3" striped bordered hover>
           <thead>
             <tr>
-              <th>Shareholder code</th>
-              <th>Shareholder type</th>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Type</th>
               <th>Capital</th>
               <th>Founder</th>
+              <th>Created at</th>
+              <th>Updated at</th>
             </tr>
           </thead>
           <tbody>
             {companyShareholders.map((companyShareholder, index) => {
               return (
                 <tr key={index}>
+                  <td>
+                    {companyShareholder.shareholder_type ===
+                    SHAREHOLDER_TYPES.INDIVIDUAL
+                      ? `${companyShareholder.shareholder_first_name} ${companyShareholder.shareholder_last_name}`
+                      : companyShareholder.shareholder_company_name}
+                  </td>
                   <td>{companyShareholder.shareholder_code}</td>
                   <td>
                     {companyShareholder.shareholder_type === 1
@@ -113,6 +123,8 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
                   </td>
                   <td>{companyShareholder.shareholder_capital}</td>
                   <td>{companyShareholder.founder ? "✓" : ""}</td>
+                  <td>{companyShareholder.created_at}</td>
+                  <td>{companyShareholder.updated_at}</td>
                 </tr>
               );
             })}

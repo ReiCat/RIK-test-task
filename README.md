@@ -31,3 +31,5 @@ To run this project the Python 3.10 and PostgreSQL 14.7 is required.
 ### Run the server
 
 `$ python main.py`
+
+The server is running on :8000 port. You can change it in settings/defaults.py if required
