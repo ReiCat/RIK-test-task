@@ -14,6 +14,8 @@ To run this project the Python 3.10 and PostgreSQL 14.7 is required.
 
 `postgres=# grant all privileges on database test_rik to test_rik;`
 
+`postgres=# \q`
+
 ### Create virtual environment for the project
 
 `$ virtualenv -p python3 venv`
@@ -28,4 +30,4 @@ To run this project the Python 3.10 and PostgreSQL 14.7 is required.
 
 ### Run the server
 
-`$ make run`
+`$ python main.py`
