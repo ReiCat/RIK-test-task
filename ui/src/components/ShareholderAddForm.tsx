@@ -9,25 +9,24 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
-import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   addCompanyShareholder,
   fetchCompanyShareholders,
+  fetchCompany,
 } from "../services/apiSource";
 import ShareholderAddClass, {
   ShareholderTypeOptions,
 } from "./data/ShareholderAddClass";
-import CompanyShareholderClass from "./data/CompanyShareholderClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
-import { LINK_PATHS } from "../constants/paths";
 
 interface ShareholderAddFormProps {
   registration_code: string;
   handleClose: Function;
-  addToCompanyShareholders: Function;
+  updateCompanyShareholders: Function;
+  updateCompanyValues: Function;
 }
 
 const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
@@ -37,7 +36,6 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
     props.registration_code
   );
   const [error, setError] = useState<string>("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     setRegistrationCode(props.registration_code);
@@ -67,7 +65,15 @@ const ShareholderAddForm: FunctionComponent<ShareholderAddFormProps> = (
         .then((addedShareholder) => {
           fetchCompanyShareholders(+newShareholder.registration_code)
             .then((shareholders) => {
-              props.addToCompanyShareholders(shareholders);
+              props.updateCompanyShareholders(shareholders);
+            })
+            .catch((err) => {
+              setError(err.response.data.message);
+            });
+
+          fetchCompany(Number(registrationCode))
+            .then((companyEntry) => {
+              props.updateCompanyValues(companyEntry);
             })
             .catch((err) => {
               setError(err.response.data.message);

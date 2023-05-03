@@ -70,10 +70,14 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
     }
   }, [company]);
 
-  const addToCompanyShareholders = (
+  const updateCompanyShareholders = (
     newCompanyShareholders: CompanyShareholderClass[]
   ) => {
     return setCompanyShareholders(newCompanyShareholders);
+  };
+
+  const updateCompanyValues = (updatedCompany: CompanyClass) => {
+    return setCompany(updatedCompany);
   };
 
   return (
@@ -175,7 +179,8 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
           <ShareholderAddForm
             registration_code={registrationCode!}
             handleClose={handleClose}
-            addToCompanyShareholders={addToCompanyShareholders}
+            updateCompanyShareholders={updateCompanyShareholders}
+            updateCompanyValues={updateCompanyValues}
           />
         </Modal.Body>
         <Modal.Footer>
@@ -193,7 +198,8 @@ const CompanyDetails: React.FC<CompanyDetailsProps> = (
           <ShareholderEditForm
             shareholderToEdit={shareholderToEdit!}
             handleClose={handleCloseEditShareholderForm}
-            addToCompanyShareholders={addToCompanyShareholders}
+            updateCompanyShareholders={updateCompanyShareholders}
+            updateCompanyValues={updateCompanyValues}
           />
         </Modal.Body>
         <Modal.Footer>

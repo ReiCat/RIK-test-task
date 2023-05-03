@@ -9,17 +9,16 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
-import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   updateCompanyShareholder,
   fetchCompanyShareholders,
+  fetchCompany,
 } from "../services/apiSource";
 import CompanyShareholderClass from "./data/CompanyShareholderClass";
 import { SHAREHOLDER_TYPES } from "../constants/enums";
-import { LINK_PATHS } from "../constants/paths";
 import ShareholderEditClass, {
   ShareholderTypeOptions,
 } from "./data/ShareholderEditClass";
@@ -27,7 +26,8 @@ import ShareholderEditClass, {
 interface ShareholderEditFormProps {
   shareholderToEdit: CompanyShareholderClass;
   handleClose: Function;
-  addToCompanyShareholders: Function;
+  updateCompanyShareholders: Function;
+  updateCompanyValues: Function;
 }
 
 const ShareholderEditForm: FunctionComponent<ShareholderEditFormProps> = (
@@ -36,7 +36,6 @@ const ShareholderEditForm: FunctionComponent<ShareholderEditFormProps> = (
   const [shareholderToEdit, setShareholderToEdit] =
     useState<CompanyShareholderClass>(props.shareholderToEdit);
   const [error, setError] = useState<string>("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     setShareholderToEdit(props.shareholderToEdit);
@@ -81,11 +80,20 @@ const ShareholderEditForm: FunctionComponent<ShareholderEditFormProps> = (
         .then((updatedShareholder) => {
           fetchCompanyShareholders(+updatedShareholder.registration_code)
             .then((shareholders) => {
-              props.addToCompanyShareholders(shareholders);
+              props.updateCompanyShareholders(shareholders);
             })
             .catch((err) => {
               setError(err.response.data.message);
             });
+
+          fetchCompany(Number(updatedShareholder.registration_code))
+            .then((companyEntry) => {
+              props.updateCompanyValues(companyEntry);
+            })
+            .catch((err) => {
+              setError(err.response.data.message);
+            });
+
           props.handleClose();
         })
         .catch((err) => {
